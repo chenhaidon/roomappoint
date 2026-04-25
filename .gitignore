@@ -1,0 +1,39 @@
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.iml
+
+# Logs
+*.log
+
+# Runtime / temp
+.run/
+*.pid
+
+# Frontend (Vue)
+RoomAppoint.elementui/node_modules/
+RoomAppoint.elementui/dist/
+RoomAppoint.elementui/.env*
+!RoomAppoint.elementui/.env.example
+
+# Backend (Spring Boot / Maven)
+RoomAppoint.springboot/target/
+RoomAppoint.springboot/.mvn/wrapper/maven-wrapper.jar
+
+# Uploads (user-generated)
+uploads/
+
+# Local / sensitive
+roomappoint.sql
+分享链接.txt
+
+# Build artifacts
+*.class
+*.jar
+*.war
+*.ear
+
+# Misc
+*.ndm2

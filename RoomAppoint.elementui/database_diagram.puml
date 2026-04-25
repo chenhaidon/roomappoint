@@ -1,0 +1,86 @@
+@startuml
+
+' 设置图表方向
+left to right direction
+
+' 实体定义
+entity "系统用户" as User {
+  + id: INT (PK)
+  + username: VARCHAR
+  + password: VARCHAR
+  + name: VARCHAR
+  + age: INT
+  + gender: VARCHAR
+  + phone: VARCHAR
+  + address: VARCHAR
+  + role_type: VARCHAR
+  + image_urls: VARCHAR
+}
+
+entity "自习室" as Room {
+  + id: INT (PK)
+  + name: VARCHAR
+  + capacity: INT
+  + location: VARCHAR
+  + description: TEXT
+  + status: VARCHAR
+}
+
+entity "座位" as Seat {
+  + id: INT (PK)
+  + room_id: INT (FK)
+  + seat_number: VARCHAR
+  + status: VARCHAR
+}
+
+entity "预约记录" as AppointRecord {
+  + id: INT (PK)
+  + user_id: INT (FK)
+  + room_id: INT (FK)
+  + seat_id: INT (FK)
+  + start_time: DATETIME
+  + end_time: DATETIME
+  + status: VARCHAR
+}
+
+entity "积分记录" as IntegralRecord {
+  + id: INT (PK)
+  + user_id: INT (FK)
+  + type: VARCHAR
+  + amount: INT
+  + reason: VARCHAR
+}
+
+entity "封面" as Banner {
+  + id: INT (PK)
+  + image_url: VARCHAR
+  + title: VARCHAR
+  + description: TEXT
+  + sort: INT
+  + status: VARCHAR
+}
+
+' 关系定义
+User "1" -- "n" AppointRecord : 预约
+User "1" -- "n" IntegralRecord : 产生
+Room "1" -- "n" Seat : 包含
+Room "1" -- "n" AppointRecord : 被预约
+Seat "1" -- "n" AppointRecord : 被预约
+
+' 样式设置
+skinparam backgroundColor #F4F6F8
+skinparam entity {
+  backgroundColor #E8F4F8
+  borderColor #28b2d4
+  fontName Microsoft YaHei
+  fontSize 14
+}
+skinparam relationship {
+  Color #333333
+  thickness 1.5
+}
+skinparam shadowing true
+
+' 标题
+title 自习室预约系统数据库关系图
+@enduml
