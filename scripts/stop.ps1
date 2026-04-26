@@ -23,31 +23,34 @@ function Stop-ByPidFile([string]$name) {
 }
 
 function Stop-ByPortNetTcp([int]$port) {
-  $conns = Get-NetTCPConnection -State Listen -LocalPort $port -ErrorAction SilentlyContinue
-  foreach ($c in $conns) {
-    Stop-Process -Id $c.OwningProcess -Force -ErrorAction SilentlyContinue
-    "Killed process on port $port. PID=$($c.OwningProcess)" | Write-Host
+  try {
+    $conns = Get-NetTCPConnection -State Listen -LocalPort $port -ErrorAction Stop | Select-Object -ExpandProperty OwningProcess -Unique
+    foreach ($pid in $conns) {
+      Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
+      "Killed process on port $port. PID=$pid" | Write-Host
+    }
+  } catch {
   }
 }
 
 function Stop-ByPortNetstat([int]$port) {
   $lines = netstat -ano | Select-String ":$port" | ForEach-Object { $_.Line }
+  $pids = @()
   foreach ($line in $lines) {
-    if ($line -match 'LISTENING\s+(\d+)$') {
-      $pid = [int]$Matches[1]
-      Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
-      "Killed process on port $port. PID=$pid" | Write-Host
+    if ($line -match ":$port\s+.+\s+(LISTENING|侦听)\s+(\d+)\s*$") {
+      $pids += [int]$Matches[2]
     }
+  }
+  $pids = $pids | Select-Object -Unique
+  foreach ($pid in $pids) {
+    Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
+    "Killed process on port $port. PID=$pid" | Write-Host
   }
 }
 
 function Stop-ByPort([int]$port) {
-  # Prefer Get-NetTCPConnection, but fall back to netstat parsing
-  try {
-    Stop-ByPortNetTcp $port
-  } catch {
-    Stop-ByPortNetstat $port
-  }
+  Stop-ByPortNetTcp $port
+  Stop-ByPortNetstat $port
 }
 
 Stop-ByPidFile 'frontend'

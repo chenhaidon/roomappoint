@@ -10,7 +10,6 @@
 
 <script>
 import { ReplaceImageHttp, GetFileNameByPath } from "@/utils/comm.js";
-import store from "@/store";
 export default {
     name: "UploadImages",
     props: {
@@ -30,17 +29,12 @@ export default {
     },
 
     mounted() {
-        //第一次进来绑定对应的值
         if (this.$props.value) {
             this.fileList = this.$props.value.split(",").map(x => { return { url: ReplaceImageHttp(x), name: GetFileNameByPath(ReplaceImageHttp(x)), status: "success" }; });
         }
     },
 
     methods: {
-        /**
-         * 得到成功的文件集合对象
-         * @param files 
-         */
         FileListConvert(files) {
             let list = [];
             if (Array.isArray(files)) {
@@ -55,24 +49,15 @@ export default {
             }
             return list;
         },
-        /**
-         *  文件上传成功处理
-         * @param response 响应
-         * @param file  当前文件
-         * @param fileList  所有文件
-         */
-        async handleUploadSuccess(response, file, fileList) {
+        async handleUploadSuccess(...args) {
+            const fileList = args[2] || [];
             let fs = this.FileListConvert(fileList);
             let url = fs.length > 0 ? fs.map(x => x.url).join(",") : "";
             this.$emit('input', url);
         },
 
-        /**
-         *  文件移除处理
-         * @param file  当前文件
-         * @param fileList  所有文件
-         */
-        async handleRemove(file, fileList) {
+        async handleRemove(...args) {
+            const fileList = args[1] || [];
             let fs = this.FileListConvert(fileList);
             let url = fs.length > 0 ? fs.map(x => x.url).join(",") : "";
             this.$emit('input', url);
@@ -82,11 +67,33 @@ export default {
 </script>
 
 <style scoped>
-.uploadImage {
-    background-color: transparent;
+.upload-files-wrap {
+    border: 1px dashed var(--lib-border);
+    background: rgba(255, 252, 247, 0.7);
+    border-radius: var(--lib-radius-md);
+    padding: var(--lib-space-sm);
 }
 
-.el-upload--picture-card {
-    background-color: transparent !important;
+.upload-files-wrap /deep/ .el-upload--picture-card {
+    background: var(--lib-bg-surface) !important;
+    border-color: var(--lib-border) !important;
+    border-radius: var(--lib-radius-md);
+    color: var(--lib-text-secondary);
+    transition: border-color .2s ease, color .2s ease;
+}
+
+.upload-files-wrap /deep/ .el-upload--picture-card:hover {
+    border-color: var(--lib-accent) !important;
+    color: var(--lib-accent);
+}
+
+.upload-files-wrap /deep/ .el-upload-list--picture-card .el-upload-list__item {
+    border: 1px solid var(--lib-border);
+    border-radius: var(--lib-radius-md);
+    background: var(--lib-bg-surface);
+}
+
+.upload-files-wrap /deep/ .el-upload-list__item-actions {
+    border-radius: var(--lib-radius-md);
 }
 </style>

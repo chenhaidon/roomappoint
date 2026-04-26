@@ -1,6 +1,10 @@
 <template>
     <div class="app-container">
-        <el-page-header class="card margin-top-lg" @back="goBack" :content="'我的总积分 ' + MyIntegralData.TotalIntegral">
+        <el-page-header class="card margin-top-lg integral-header">
+            <template slot="content">
+                <span class="integral-text">我的总积分</span>
+                <span class="integral-value">{{ MyIntegralData.TotalIntegral }}</span>
+            </template>
         </el-page-header>
 
 
@@ -114,10 +118,6 @@ export default {
 
     },
     methods: {
-        //返回上一个页面
-        goBack() {
-            this.$router.go(-1)
-        },
         /**
          * 点击表格搜索按钮会触发
          */
@@ -152,3 +152,32 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+.integral-header /deep/ .el-page-header__left {
+    display: none;
+}
+
+.integral-header /deep/ .el-page-header__content {
+    margin-left: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--lib-space-xs);
+}
+
+.integral-text {
+    color: var(--lib-text-primary);
+}
+
+.integral-value {
+    display: inline-block;
+    min-width: 44px;
+    padding: 0 10px;
+    border-radius: 6px;
+    background: #e53935;
+    color: #fff;
+    line-height: 1.8;
+    font-weight: 700;
+    text-align: center;
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-    <div style="margin: 15px 0px;">
+    <div class="pagination-box">
         <div v-if="loading"><el-skeleton :rows="12" animated /></div>
         <div v-else>
             <el-empty v-if="options.length == 0" description="看官，数据正在维护中"></el-empty>
@@ -18,8 +18,6 @@
 
 <script>
 
-import store from "@/store";
-import { mapGetters } from "vuex";
 export default {
 
     props: {
@@ -110,45 +108,55 @@ export default {
 
 </script>
 <style scoped>
+.pagination-box {
+    margin: var(--lib-space-md) 0;
+    padding: var(--lib-space-md);
+    background: var(--lib-bg-surface);
+    border: 1px solid var(--lib-border);
+    border-radius: var(--lib-radius-lg);
+    box-shadow: var(--lib-shadow-sm);
+}
+
 .box {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
     box-sizing: border-box;
-
+    gap: var(--lib-space-sm);
 }
 
 .item {
     width: 100%;
-    padding: 5px;
+    padding: var(--lib-space-xs);
     box-sizing: border-box;
-
 }
 
 .content-cut {
-
     overflow: hidden;
     text-overflow: ellipsis;
     word-break: break-all;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;
-
-    line-height: 1.2em;
-}
-
-.card {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
-    height: 100%;
-    border-radius: 10px;
-
-
+    line-height: 1.5;
 }
 
 .custom-pagination {
-    margin-top: 20px;
-    padding-bottom: 20px;
+    margin-top: var(--lib-space-lg);
+    padding-top: var(--lib-space-sm);
+    border-top: 1px solid var(--lib-border);
     display: flex;
     flex-direction: row-reverse;
 }
+
+.custom-pagination /deep/ .el-pagination.is-background .el-pager li {
+    border-radius: 8px;
+}
+
+.custom-pagination /deep/ .el-pagination__total,
+.custom-pagination /deep/ .el-pagination__jump {
+    color: var(--lib-text-secondary);
+}
 </style>
+
+

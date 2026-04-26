@@ -1,11 +1,11 @@
 <template>
     <div>
 
-        <div class="margin-top-lg card">
+        <div class="margin-top-lg card home-carousel-card">
             <el-carousel :interval="5000" arrow="always" height="400px">
                 <el-carousel-item v-for="item in BannerList" :key="item.Id">
-                    <div>
-                        <img :src="item.Cover" style="width: 100%;">
+                    <div class="banner-item-wrap">
+                        <img :src="NormalizeImage(item.Cover)" class="banner-image">
                     </div>
                 </el-carousel-item>
             </el-carousel>
@@ -17,8 +17,8 @@
                 <template v-slot:content="{ data }">
                     <div class="room-list">
                         <div class="room-item" v-for="item in data" :key="item.Id" @click="ToRoom(item)">
-                            <img class="room-cover" :src="item.Cover">
-                            <div>
+                            <img class="room-cover" :src="NormalizeImage(item.Cover)">
+                            <div class="room-meta">
                                 <span class="tit">{{ item.Name }}</span>
                             </div>
                         </div>
@@ -35,6 +35,7 @@
 
 <script>
 import Pagination from "@/components/Pagination/PaginationBox.vue"
+import { ReplaceImageHttp } from "@/utils/comm";
 export default {
     components: {
         Pagination
@@ -49,6 +50,22 @@ export default {
         this.BannerListApi();
     },
     methods: {
+        NormalizeImage(value) {
+            if (!value) {
+                return "";
+            }
+            let raw = Array.isArray(value) ? value[0] : String(value);
+            raw = raw.trim();
+            if (raw.startsWith("[") && raw.endsWith("]")) {
+                try {
+                    const arr = JSON.parse(raw);
+                    raw = Array.isArray(arr) ? (arr[0] || "") : raw;
+                } catch (e) {
+                }
+            }
+            raw = String(raw).split(",")[0].trim().replace(/^['\"]|['\"]$/g, "");
+            return ReplaceImageHttp(raw);
+        },
         async BannerListApi() {
             const res = await this.$Post("/Banner/List", {});
             const Items = (res && res.Success && res.Data && res.Data.Items) ? res.Data.Items : [];
@@ -71,36 +88,63 @@ export default {
 
 
 <style scoped>
+.home-carousel-card {
+    padding: var(--lib-space-sm);
+}
+
+.banner-item-wrap {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--lib-radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--lib-border);
+}
+
+.banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .room-list {
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
-    margin-left: 10px;
+    gap: var(--lib-space-lg);
+    margin-top: var(--lib-space-md);
 }
 
 .room-list .room-item {
-    width: 260px;
+    flex: 1 1 280px;
+    min-width: 240px;
+    max-width: 360px;
     cursor: pointer;
-    margin-bottom: 20px;
-    margin-left: 40px;
-
+    border-radius: var(--lib-radius-lg);
+    border: 1px solid var(--lib-border);
+    background: #fff;
+    box-shadow: var(--lib-shadow-sm);
+    transition: transform .25s ease, box-shadow .25s ease;
+    overflow: hidden;
 }
 
 .room-list .room-item:hover {
-    transform: scale(1.05);
-    transition: all 0.5s;
+    transform: translateY(-4px);
+    box-shadow: var(--lib-shadow-md);
 }
 
 .room-list .room-item .room-cover {
-    width: 260px;
-    height: 260px;
-    border-radius: 20px;
-
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
 }
 
-
+.room-meta {
+    padding: var(--lib-space-sm) var(--lib-space-md);
+}
 
 .room-list .room-item .tit {
-    font-weight: bold;
+    color: var(--lib-text-primary);
+    font-weight: 700;
     width: 100%;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -111,8 +155,10 @@ export default {
 }
 
 .item-header {
-    border-left: 5px solid #28b2d4;
-    padding-left: 5px;
-    font-weight: bolder;
+    border-left: 4px solid var(--lib-wood);
+    padding-left: var(--lib-space-sm);
+    color: var(--lib-text-primary);
+    font-weight: 700;
+    letter-spacing: 1px;
 }
 </style>

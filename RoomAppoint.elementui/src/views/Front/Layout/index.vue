@@ -1,52 +1,45 @@
 <template>
     <div>
         <el-container>
-            <el-header style="background-color: white;">
-                <el-menu :default-active="active" class="main-container" mode="horizontal" text-color="black"
-                    active-text-color="#28b2d4">
-                    <el-menu-item index="">
-                        <img style="height: 50px;object-fit: contain;" :src="require('@/assets/logo.jpg')">
+            <el-header class="front-header">
+                <el-menu :default-active="active" class="main-container front-menu" mode="horizontal" text-color="black"
+                    active-text-color="#2E4A62">
+                    <el-menu-item index="" class="brand-logo-item">
+                        <img class="brand-logo" :src="require('@/assets/logo.jpg')">
                     </el-menu-item>
 
-                    <el-menu-item index="/Front/Home" @click="ToPath('/Front/Home')">志高自习室预约</el-menu-item>
+                    <el-menu-item index="/Front/Home" @click="ToPath('/Front/Home')" class="brand-title">志高自习室预约</el-menu-item>
 
-                    <el-menu-item style="float: right;" v-if="!Token" @click="ToRegister()">注册</el-menu-item>
-                    <el-menu-item style="float: right;" v-if="!Token" @click="ToLogin()">登录</el-menu-item>
-                    <el-submenu style="float: right;" v-if="Token" index="user-menu">
+                    <el-menu-item class="menu-right menu-action" v-if="!Token" @click="ToRegister()">注册</el-menu-item>
+                    <el-menu-item class="menu-right menu-action" v-if="!Token" @click="ToLogin()">登录</el-menu-item>
+                    <el-submenu class="menu-right" v-if="Token" index="user-menu">
                         <template slot="title">
-                            <el-avatar v-if="UserInfo && UserInfo.ImageUrls" :size="28" :src="UserInfo.ImageUrls" style="margin-right: 8px;" />
-                            {{ UserInfo.UserName }}
+                            <el-avatar v-if="avatarUrl" :size="28" :src="avatarUrl" class="user-avatar" />
+                            {{ UserInfo && UserInfo.UserName }}
                         </template>
+                        <el-menu-item @click="ToPath('/Front/IntegralList')">我的积分</el-menu-item>
+                        <el-menu-item @click="ToPath('/Front/AppointRecordList')">我的预约记录</el-menu-item>
                         <el-menu-item @click="ToUserInfo()">个人信息</el-menu-item>
                         <el-menu-item @click="ToEditPassword()">修改密码</el-menu-item>
                         <el-menu-item @click="LoginOut()">退出</el-menu-item>
                     </el-submenu>
-                    <el-menu-item style="float: right;" index="/Front/AppointRecordList"
-                        @click="ToPath('/Front/AppointRecordList')" v-if="Token">我的预约记录</el-menu-item>
-                    <el-menu-item style="float: right;" index="/Front/IntegralList"
-                        @click="ToPath('/Front/IntegralList')" v-if="Token">我的积分</el-menu-item>
-
-
-
                 </el-menu>
-
             </el-header>
             <el-main class="main-container main-box">
                 <router-view></router-view>
             </el-main>
-            <div style="height: 20px;"></div>
-            <el-footer style="background-color:#28b2d4">
-                <div style="text-align: center;color:white;font-weight: bolder;">系统归 志高自习室预约所有</div>
+            <div class="footer-gap"></div>
+            <el-footer class="front-footer">
+                <div class="footer-content">系统归 志高自习室预约所有</div>
             </el-footer>
         </el-container>
-
-
     </div>
 </template>
 
 <script>
 
 import { mapGetters } from 'vuex'
+import { ReplaceImageHttp } from '@/utils/comm'
 export default {
     data() {
         return {
@@ -58,9 +51,28 @@ export default {
 
     },
     computed: {
-        ...mapGetters(["UserInfo", "Token"])
+        ...mapGetters(["UserInfo", "Token"]),
+        avatarUrl() {
+            return this.NormalizeImage(this.UserInfo && this.UserInfo.ImageUrls);
+        }
     },
     methods: {
+        NormalizeImage(value) {
+            if (!value) {
+                return "";
+            }
+            let raw = Array.isArray(value) ? value[0] : String(value);
+            raw = raw.trim();
+            if (raw.startsWith("[") && raw.endsWith("]")) {
+                try {
+                    const arr = JSON.parse(raw);
+                    raw = Array.isArray(arr) ? (arr[0] || "") : raw;
+                } catch (e) {
+                }
+            }
+            raw = String(raw).split(",")[0].trim().replace(/^['\"]|['\"]$/g, "");
+            return ReplaceImageHttp(raw);
+        },
         //前往登录
         ToLogin() {
             this.$router.push({
@@ -108,17 +120,74 @@ export default {
 </script>
 
 <style scoped>
-.main-container {
-    width: 1300px;
-    margin: 0 auto;
+.front-header {
+    background: var(--lib-bg-surface);
+    border-bottom: 1px solid var(--lib-border);
+    box-shadow: var(--lib-shadow-sm);
+    padding: 0;
 }
 
+.main-container {
+    max-width: var(--lib-container);
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 var(--lib-space-md);
+}
+
+.front-menu {
+    background: transparent;
+    border-bottom: none;
+}
+
+.brand-logo-item {
+    padding: 0 var(--lib-space-sm);
+}
+
+.brand-logo {
+    height: 46px;
+    object-fit: contain;
+}
+
+.brand-title {
+    font-weight: 700;
+    color: var(--lib-text-primary);
+}
+
+.menu-right {
+    float: right;
+}
+
+.menu-action {
+    color: var(--lib-text-secondary);
+}
+
+.user-avatar {
+    margin-right: 8px;
+}
 
 .main-box {
-    min-height: calc(100vh - 120px);
+    min-height: calc(100vh - 138px);
+    padding-top: var(--lib-space-md);
+    padding-bottom: var(--lib-space-md);
+}
+
+.footer-gap {
+    height: var(--lib-space-sm);
+}
+
+.front-footer {
+    background: var(--lib-accent);
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.footer-content {
+    text-align: center;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 1px;
 }
 
 .el-main {
-    padding: 0px !important;
+    padding: 0 !important;
 }
 </style>

@@ -1,15 +1,16 @@
 <template>
-    <el-select style="width: 100%;" :disabled="disabled" v-model="selectValue" filterable placeholder="请选择"
-        :filterable="true" :loading="loading" :clearable="true" :remote="true" @change="Change">
+    <el-select class="single-select" :disabled="disabled" v-model="selectValue" filterable placeholder="请选择"
+        :loading="loading" :clearable="true" :remote="true" @change="Change">
         <el-option v-for="item in options" :key="item.value" :label="item.name" :value="item.value">
-            <span style="float: left">{{ item.name }}</span>
-            <span style="float: right; color: #8492a6; font-size: 14px">{{ item.label }}</span>
+            <div class="option-row">
+                <span class="option-name">{{ item.name }}</span>
+                <span class="option-label">{{ item.label }}</span>
+            </div>
         </el-option>
     </el-select>
 </template>
 
 <script>
-import store from "@/store";
 export default {
 
     props: {
@@ -49,7 +50,7 @@ export default {
     watch: {
         "value": {
             immediate: true, //该回调将会在侦听开始之后被立即调用
-            handler: function (n, o) {
+            handler: function (n) {
                 if (n?.toString()?.length > 0) {
                     this.selectValue = n.toString();
                 }
@@ -104,7 +105,7 @@ export default {
             });
             this.loading = false;
             let dataList = [];
-            Items.forEach((item, index) => {
+            Items.forEach((item) => {
                 if (this.filterValue.find(x => x == item[`${this.columnValue}`]?.toString()) == null) {
                     dataList.push({
                         name: item[`${this.columnName}`],
@@ -132,3 +133,43 @@ export default {
 }
 
 </script>
+
+<style scoped>
+.single-select {
+    width: 100%;
+}
+
+.single-select /deep/ .el-input__inner {
+    border-color: var(--lib-border);
+    background: var(--lib-bg-surface);
+    color: var(--lib-text-primary);
+    border-radius: var(--lib-radius-md);
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.single-select /deep/ .el-input__inner:hover {
+    border-color: color-mix(in srgb, var(--lib-accent) 35%, var(--lib-border) 65%);
+}
+
+.single-select /deep/ .el-input.is-focus .el-input__inner,
+.single-select /deep/ .el-input__inner:focus {
+    border-color: var(--lib-accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--lib-accent) 18%, transparent 82%);
+}
+
+.option-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--lib-space-sm);
+}
+
+.option-name {
+    color: var(--lib-text-primary);
+}
+
+.option-label {
+    color: var(--lib-text-secondary);
+    font-size: 13px;
+}
+</style>

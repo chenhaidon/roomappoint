@@ -4,7 +4,7 @@
         </el-page-header>
         <div class=" card margin-top-lg margin-bottom-lg">
             <div>
-                <img :src="RoomDetail.Cover" style="width: 100%;border-radius: 10px;">
+                <img :src="NormalizeImage(RoomDetail.Cover)" style="width: 100%;border-radius: 10px;">
             </div>
             <div class="container">
                 <el-tabs v-model="activeName">
@@ -116,6 +116,7 @@
 import store from '@/store';
 import { mapGetters } from 'vuex';
 import Pagination from "@/components/Pagination/PaginationBox.vue"
+import { ReplaceImageHttp } from "@/utils/comm";
 export default {
     components: {
         Pagination
@@ -143,6 +144,22 @@ export default {
 
     },
     methods: {
+        NormalizeImage(value) {
+            if (!value) {
+                return "";
+            }
+            let raw = Array.isArray(value) ? value[0] : String(value);
+            raw = raw.trim();
+            if (raw.startsWith("[") && raw.endsWith("]")) {
+                try {
+                    const arr = JSON.parse(raw);
+                    raw = Array.isArray(arr) ? (arr[0] || "") : raw;
+                } catch (e) {
+                }
+            }
+            raw = String(raw).split(",")[0].trim().replace(/^['\"]|['\"]$/g, "");
+            return ReplaceImageHttp(raw);
+        },
         //得到自习室详情接口
         async GetRoomApi() {
             let { Data } = await this.$Post("/Room/Get", { Id: this.RoomId })

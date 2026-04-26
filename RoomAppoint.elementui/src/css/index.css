@@ -1,7 +1,30 @@
+:root {
+    --lib-bg-page: #F7F4EE;
+    --lib-bg-surface: #FFFCF7;
+    --lib-text-primary: #1F2A37;
+    --lib-text-secondary: #5B6675;
+    --lib-accent: #2E4A62;
+    --lib-accent-soft: #EAF0F5;
+    --lib-wood: #A67C52;
+    --lib-border: #E6DED1;
+    --lib-success: #2F7D5B;
+    --lib-warning: #B47D2A;
+    --lib-danger: #B94A48;
+    --lib-radius-md: 10px;
+    --lib-radius-lg: 14px;
+    --lib-shadow-sm: 0 3px 12px rgba(31, 42, 55, 0.06);
+    --lib-shadow-md: 0 10px 30px rgba(31, 42, 55, 0.1);
+    --lib-space-xs: 6px;
+    --lib-space-sm: 12px;
+    --lib-space-md: 18px;
+    --lib-space-lg: 26px;
+    --lib-space-xl: 36px;
+    --lib-container: 1280px;
+}
+
 html,
 body {
     height: 100%;
-    /* 文字风格 Sans-serif 各笔画粗细相同，Serif 笔画粗细不同，monospace 等宽体，cursive草书，fantasy梦幻 */
     font-family: 'Microsoft YaHei', sans-serif, 'Helvetica Neue', Helvetica, Arial,
         '黑体', '宋体', Arial;
     -webkit-tap-highlight-color: transparent;
@@ -10,8 +33,10 @@ body {
 }
 
 body {
-    font-size: 18px;
-    color: #333;
+    font-size: 16px;
+    color: var(--lib-text-primary);
+    background: var(--lib-bg-page);
+    line-height: 1.6;
 }
 
 /* 重置各标签的默认样式 */

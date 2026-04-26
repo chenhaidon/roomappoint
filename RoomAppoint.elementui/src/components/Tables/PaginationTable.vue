@@ -48,8 +48,8 @@
                         <el-table-column v-else-if="item.type == 9" v-bind="item" align="center" :key="item.type"
                             :prop="item.key" :label="item.title" :width="item.width || 'auto'">
                             <template slot-scope="{ row }">
-                                <template v-for="(tagItem, tagIndex) in row[item.key]">
-                                    <el-tag type="primary">{{ tagItem }}</el-tag>
+                                <template v-for="(tagItem, tagIdx) in row[item.key]">
+                                    <el-tag :key="`${item.key}-${tagIdx}`" type="primary">{{ tagItem }}</el-tag>
                                 </template>
                             </template>
                         </el-table-column>
@@ -70,8 +70,9 @@
                             :prop="item.key" :label="item.title" :width="item.width || 'auto'" align="center">
                             <template slot-scope="{ row }">
 
-                                <el-image v-for="(image, idx) in row[`${item.key}`]" style="width: 50px; height: 40px"
-                                    :src="image" :preview-src-list="row[`${item.key}`]" fit="scale-down">
+                                <el-image v-for="(image, imageIdx) in row[`${item.key}`]" :key="`${item.key}-${imageIdx}`"
+                                    class="table-thumb" :src="image" :preview-src-list="row[`${item.key}`]"
+                                    fit="scale-down">
                                     <div slot="error" class="image-slot">
                                         <i class="el-icon-picture-outline"></i>
                                     </div>
@@ -101,15 +102,14 @@
                         <el-table-column v-else-if="item.type == 16" v-bind="item" align="center" :key="'LINK' + idx"
                             :width="item.width || 'auto'" :prop="item.key" :label="item.title">
                             <template slot-scope="{ row }">
-                                <a v-if="row[`${item.key}`]" target="_blank"
-                                    style="color:blue;text-decoration:underline" :href="row[`${item.key}`]">超链接</a>
+                                <a v-if="row[`${item.key}`]" target="_blank" class="table-link" :href="row[`${item.key}`]">超链接</a>
                             </template>
                         </el-table-column>
                         <el-table-column v-else-if="item.type == 17" v-bind="item" :key="'IMAGE' + idx" :prop="item.key"
                             :label="item.title" :width="item.width || 'auto'" align="center">
                             <template slot-scope="{ row }">
 
-                                <el-image style="width: 50px; height: 40px" :src="row[`${item.key}`]"
+                                <el-image class="table-thumb" :src="row[`${item.key}`]"
                                     :preview-src-list="[row[`${item.key}`]]" fit="scale-down">
                                     <div slot="error" class="image-slot">
                                         <i class="el-icon-picture-outline"></i>
@@ -326,15 +326,14 @@ export default {
 
 <style scoped>
 .custom-pagination {
-    margin-top: 20px;
+    margin-top: var(--lib-space-lg);
+    padding-top: var(--lib-space-sm);
+    border-top: 1px solid var(--lib-border);
     display: flex;
     flex-direction: row-reverse;
 }
 
-
-
 .text-cut {
-
     white-space: nowrap;
     overflow: hidden;
     text-align: center;
@@ -342,25 +341,59 @@ export default {
 }
 
 .table-box {
-    background-color: white;
-
-    margin-top: 20px;
-
+    background-color: var(--lib-bg-surface);
+    border: 1px solid var(--lib-border);
+    border-radius: var(--lib-radius-lg);
+    box-shadow: var(--lib-shadow-sm);
+    margin-top: var(--lib-space-lg);
+    overflow: hidden;
 }
 
-/* .table-box {
-    .table-search {
-        display: flex;
-        margin-bottom: 10px;
+.table-box /deep/ .el-card {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+}
 
-        .search-operation {
-            margin-left: 15px;
-            white-space: nowrap;
+.table-box /deep/ .el-card__header {
+    border-bottom: 1px solid var(--lib-border);
+    background: color-mix(in srgb, var(--lib-bg-surface) 85%, #ffffff 15%);
+    padding: var(--lib-space-sm) var(--lib-space-md);
+}
 
-            .search-isOpen {
-                margin-left: 20px;
-            }
-        }
-    }
-} */
+.table-box /deep/ .el-card__body {
+    padding: var(--lib-space-md);
+}
+
+.table-box /deep/ .el-table th {
+    background: color-mix(in srgb, var(--lib-bg-page) 75%, #ffffff 25%);
+    color: var(--lib-text-primary);
+    font-weight: 600;
+}
+
+.table-box /deep/ .el-table td,
+.table-box /deep/ .el-table th.is-leaf {
+    border-bottom: 1px solid var(--lib-border);
+}
+
+.table-box /deep/ .el-table--striped .el-table__body tr.el-table__row--striped td {
+    background: color-mix(in srgb, var(--lib-bg-page) 85%, #ffffff 15%);
+}
+
+.table-box /deep/ .el-table__body tr:hover>td {
+    background: color-mix(in srgb, var(--lib-accent) 8%, #ffffff 92%);
+}
+
+.table-thumb {
+    width: 56px;
+    height: 42px;
+    border-radius: 8px;
+    border: 1px solid var(--lib-border);
+    margin: 0 2px;
+}
+
+.table-link {
+    color: var(--lib-accent);
+    text-decoration: underline;
+}
 </style>

@@ -49,14 +49,19 @@ public class InterceptorConfig implements WebMvcConfigurer {
             uploadsLocation += "/";
         }
 
-        // 兼容数据库里存的 "/<time>/<filename>" 形式的图片地址
-        registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/static/", uploadsLocation)
-                .setCachePeriod(3600);
-
-        // 同时也支持 "/uploads/**" 直链
+        // 标准上传访问路径：/uploads/{time}/{filename}
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations(uploadsLocation)
+                .setCachePeriod(3600);
+
+        // 兼容旧数据里的 "/{time}/{filename}" 形式地址
+        registry.addResourceHandler("/*/**")
+                .addResourceLocations(uploadsLocation)
+                .setCachePeriod(3600);
+
+        // 其他静态资源仍从 classpath:/static/ 提供
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/")
                 .setCachePeriod(3600);
     }
 }

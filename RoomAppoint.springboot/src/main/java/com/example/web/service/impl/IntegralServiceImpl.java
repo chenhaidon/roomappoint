@@ -175,8 +175,11 @@ public class IntegralServiceImpl extends ServiceImpl<IntegralMapper, Integral> i
         MyIntegralDataDto myIntegralDataDto = new MyIntegralDataDto();
         CurrentUserDto currentUserDto = BaseContext.getCurrentUserDto();
         Integer userId = currentUserDto.getUserId();
-        //得到总积分
-        double totalIntegral = _IntegralMpper.selectList(Wrappers.<Integral>lambdaQuery().eq(Integral::getUserId, userId)).stream().mapToDouble(x -> x.getIntegralValue()).sum();
+
+        Integer totalIntegral = _IntegralMpper.selectList(Wrappers.<Integral>lambdaQuery().eq(Integral::getUserId, userId)).stream()
+                .map(Integral::getIntegralValue)
+                .filter(Objects::nonNull)
+                .reduce(0, Integer::sum);
 
         myIntegralDataDto.setTotalIntegral(totalIntegral);
         return myIntegralDataDto;

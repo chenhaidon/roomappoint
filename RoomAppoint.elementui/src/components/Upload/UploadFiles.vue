@@ -3,8 +3,7 @@
         <el-upload :action="uploadUrl" list-type="text" :show-file-list="true" :on-success="handleUploadSuccess"
             :on-remove="handleRemove" :file-list="fileList" :limit="limit" :multiple="true">
             <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">请上传资源文件<span
-                    style="padding-left:10px;color:rgb(237, 95, 24)">最大可上传大小不超过1GB:</span>
+            <div slot="tip" class="el-upload__tip upload-tip">请上传资源文件<span class="upload-tip-highlight">最大可上传大小不超过1GB:</span>
             </div>
         </el-upload>
     </div>
@@ -12,7 +11,6 @@
 
 <script>
 import { ReplaceImageHttp, GetFileNameByPath } from "@/utils/comm.js";
-import store from "@/store";
 export default {
     name: "UploadImages",
     props: {
@@ -32,17 +30,12 @@ export default {
     },
 
     mounted() {
-        //第一次进来绑定对应的值
         if (this.$props.value) {
             this.fileList = this.$props.value.split(",").map(x => { return { url: ReplaceImageHttp(x), name: GetFileNameByPath(ReplaceImageHttp(x)), status: "success" }; });
         }
     },
 
     methods: {
-        /**
-         * 得到成功的文件集合对象
-         * @param files 
-         */
         FileListConvert(files) {
             let list = [];
             if (Array.isArray(files)) {
@@ -57,24 +50,14 @@ export default {
             }
             return list;
         },
-        /**
-         *  文件上传成功处理
-         * @param response 响应
-         * @param file  当前文件
-         * @param fileList  所有文件
-         */
-        async handleUploadSuccess(response, file, fileList) {
+        async handleUploadSuccess(...args) {
+            const fileList = args[2] || [];
             let fs = this.FileListConvert(fileList);
             let url = fs.length > 0 ? fs.map(x => x.url).join(",") : "";
             this.$emit('input', url);
         },
-
-        /**
-         *  文件移除处理
-         * @param file  当前文件
-         * @param fileList  所有文件
-         */
-        async handleRemove(file, fileList) {
+        async handleRemove(...args) {
+            const fileList = args[1] || [];
             let fs = this.FileListConvert(fileList);
             let url = fs.length > 0 ? fs.map(x => x.url).join(",") : "";
             this.$emit('input', url);
@@ -84,11 +67,47 @@ export default {
 </script>
 
 <style scoped>
-.uploadImage {
-    background-color: transparent;
+.upload-files-wrap {
+    border: 1px dashed var(--lib-border);
+    background: rgba(255, 252, 247, 0.7);
+    border-radius: var(--lib-radius-md);
+    padding: var(--lib-space-sm);
 }
 
-.el-upload--picture-card {
-    background-color: transparent !important;
+.upload-files-wrap /deep/ .el-upload-list__item {
+    border: 1px solid var(--lib-border);
+    border-radius: 8px;
+    background: var(--lib-bg-surface);
+}
+
+.upload-files-wrap /deep/ .el-upload-list__item-name {
+    color: var(--lib-text-primary);
+}
+
+.upload-files-wrap /deep/ .el-upload-list__item-status-label,
+.upload-files-wrap /deep/ .el-upload-list__item .el-icon-close {
+    color: var(--lib-text-secondary);
+}
+
+.upload-files-wrap /deep/ .el-button--primary {
+    background: var(--lib-accent);
+    border-color: var(--lib-accent);
+    border-radius: var(--lib-radius-md);
+}
+
+.upload-files-wrap /deep/ .el-button--primary:hover,
+.upload-files-wrap /deep/ .el-button--primary:focus {
+    background: color-mix(in srgb, var(--lib-accent) 88%, #ffffff 12%);
+    border-color: color-mix(in srgb, var(--lib-accent) 88%, #ffffff 12%);
+}
+
+.upload-tip {
+    color: var(--lib-text-secondary);
+}
+
+.upload-tip-highlight {
+    padding-left: var(--lib-space-sm);
+    color: var(--lib-wood);
+    font-weight: 600;
 }
 </style>

@@ -10,5 +10,5 @@ public class MyIntegralDataDto {
      * 总积分
      */
     @JsonProperty("TotalIntegral")
-    public Double TotalIntegral;
+    public Integer TotalIntegral;
 }

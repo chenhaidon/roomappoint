@@ -1,21 +1,20 @@
 <template>
     <div>
-        <el-container style="height: 100vh">
-
-            <el-header>
-                <div class="bg-header">
-                    <div style="display: flex;align-items: center;">
-                        <img style="height: 30px;object-fit: contain;" :src="require('@/assets/logo2.png')">
-                        <span style="margin-left:10px">自习室管理端</span>
+        <el-container class="admin-container">
+            <el-header class="admin-header-shell">
+                <div class="bg-header admin-header">
+                    <div class="header-brand">
+                        <img class="brand-logo" :src="require('@/assets/logo2.png')">
+                        <span class="brand-name">自习室管理端</span>
                     </div>
-                    <div style="display: flex;align-items: center">
-                        <el-avatar :size="60" :src="UserInfo.ImageUrls" size="medium">
+                    <div class="header-user">
+                        <el-avatar :size="48" :src="avatarUrl">
                             <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png" />
                         </el-avatar>
-                        <div style="margin-left:10px">
+                        <div class="user-dropdown-wrap">
                             <el-dropdown>
-                                <span class="el-dropdown-link" style="color:white">
-                                    {{ UserInfo.Name }}<i class="el-icon-arrow-down el-icon--right"></i>
+                                <span class="el-dropdown-link user-dropdown-link">
+                                    {{ UserInfo && UserInfo.Name }}<i class="el-icon-arrow-down el-icon--right"></i>
                                 </span>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item>
@@ -40,9 +39,9 @@
 
 
             <el-container>
-                <el-aside width="200px">
+                <el-aside width="220px" class="admin-aside">
 
-                    <el-menu class="menu-list" :router="true" active-text-color="#28b2d4">
+                    <el-menu class="menu-list" :router="true" active-text-color="#2E4A62">
                         <el-menu-item index="/Admin/Home">
                             <i class="el-icon-shujufenxi"></i>
                             <span>控制台</span>
@@ -120,6 +119,7 @@
 
 import { adminRouters } from "@/router/index"
 import { mapGetters } from "vuex";
+import { ReplaceImageHttp } from "@/utils/comm";
 export default {
     name: 'Layout',
     data() {
@@ -129,7 +129,10 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(["UserInfo"])
+        ...mapGetters(["UserInfo"]),
+        avatarUrl() {
+            return this.NormalizeImage(this.UserInfo && this.UserInfo.ImageUrls);
+        }
     },
     watch: {
         $route() {
@@ -142,6 +145,23 @@ export default {
         this.getBreadcrumb();
     },
     methods: {
+
+        NormalizeImage(value) {
+            if (!value) {
+                return "";
+            }
+            let raw = Array.isArray(value) ? value[0] : String(value);
+            raw = raw.trim();
+            if (raw.startsWith("[") && raw.endsWith("]")) {
+                try {
+                    const arr = JSON.parse(raw);
+                    raw = Array.isArray(arr) ? (arr[0] || "") : raw;
+                } catch (e) {
+                }
+            }
+            raw = String(raw).split(",")[0].trim().replace(/^['\"]|['\"]$/g, "");
+            return ReplaceImageHttp(raw);
+        },
 
         async LoginOut() {
             console.log("点击退出")
@@ -164,35 +184,65 @@ export default {
 </script>
 
 <style>
-.el-header,
-.el-footer {
+.admin-container {
+    height: 100vh;
+}
 
+.admin-header-shell {
     text-align: center;
     line-height: 60px;
-    padding: 0px;
+    padding: 0;
 }
 
-.el-aside {
-
-    color: #333;
-    text-align: center;
-    line-height: 200px;
+.admin-header {
+    padding: 0 var(--lib-space-lg);
 }
 
+.header-brand,
+.header-user {
+    display: flex;
+    align-items: center;
+}
+
+.brand-logo {
+    height: 30px;
+    object-fit: contain;
+}
+
+.brand-name {
+    margin-left: var(--lib-space-sm);
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.user-dropdown-wrap {
+    margin-left: var(--lib-space-sm);
+}
+
+.user-dropdown-link {
+    color: #fff;
+}
+
+.admin-aside {
+    background: var(--lib-bg-surface);
+    border-right: 1px solid var(--lib-border);
+}
 
 .menu-list {
     height: calc(100vh - 60px);
+    border-right: none;
+    background: transparent;
 }
 
-.el-submenu__title {
-    text-align: left
-}
-
+.el-submenu__title,
 .el-menu-item {
     text-align: left;
 }
 
 .admin-main {
     height: calc(100vh - 60px) !important;
+    overflow-y: auto;
+    padding: var(--lib-space-lg);
+    background: rgba(255, 252, 247, 0.65);
 }
 </style>
