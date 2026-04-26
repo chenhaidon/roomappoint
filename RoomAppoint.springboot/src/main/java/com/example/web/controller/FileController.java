@@ -71,7 +71,7 @@ public class FileController {
                 fileOutputStream.flush();
 
                 //定义一个返回给前端的路径地址（对外统一用 /uploads 前缀）
-                String url = "http://localhost:7245/uploads/" + time + "/" + originFileName;
+                String url = "/uploads/" + time + "/" + originFileName;
                 //加入到返回的列表中
                 fileResultDtos.add(new FileResultDto(url, originFileName));
 

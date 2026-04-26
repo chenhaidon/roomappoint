@@ -1,0 +1,58 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: roomappoint-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB}
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-time-zone=+08:00
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - roomappoint-net
+
+  backend:
+    build:
+      context: .
+      dockerfile: RoomAppoint.springboot/Dockerfile
+    container_name: roomappoint-backend
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DB: ${MYSQL_DB}
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      TZ: Asia/Shanghai
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - roomappoint-net
+
+  frontend-nginx:
+    build:
+      context: .
+      dockerfile: RoomAppoint.elementui/Dockerfile
+    container_name: roomappoint-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - roomappoint-net
+
+volumes:
+  mysql_data:
+  uploads_data:
+
+networks:
+  roomappoint-net:
+    driver: bridge
