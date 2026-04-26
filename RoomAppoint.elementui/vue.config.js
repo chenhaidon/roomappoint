@@ -15,10 +15,16 @@ module.exports = {
   },
   //配置开发服务器
   devServer: {
-     allowedHosts: 'all', // 或指定你的域名: ['6314iq108bs1.vicp.fun']
+    host: '0.0.0.0',
+    port: 8081,
+    allowedHosts: 'all', // 允许所有 Host，或使用 ['6314iq108bs1.vicp.fun']
     client: {
       // 取消编译错误 全屏覆盖
       overlay: false,
+      webSocketURL: {
+        hostname: '6314iq108bs1.vicp.fun',
+        port: 8081,
+      },
     },
   },
   css: {

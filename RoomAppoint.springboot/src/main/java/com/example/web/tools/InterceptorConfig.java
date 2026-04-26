@@ -64,4 +64,5 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/")
                 .setCachePeriod(3600);
     }
+
 }
