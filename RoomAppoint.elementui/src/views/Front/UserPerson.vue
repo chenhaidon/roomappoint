@@ -29,12 +29,30 @@
                             v-model="formData.Birth" clearable></el-date-picker>
                     </el-form-item>
 
-
-
                 </el-form>
                 <div style="display: flex;justify-content: flex-end;">
-                    <el-button type="primary" @click="CreateOrEdit">确 定</el-button>
+                    <el-button type="primary" @click="CreateOrEdit">保存信息</el-button>
                 </div>
+            </div>
+        </el-card>
+
+        <el-card class="margin-top-lg">
+            <div slot="header">
+                <span style="font-weight:700">修改密码</span>
+            </div>
+            <el-form ref="pwdFormRef" :model="pwdForm" label-width="80px" size="mini" :rules="pwdRules">
+                <el-form-item label="原始密码" prop="OrginPassword">
+                    <el-input type="password" v-model.trim="pwdForm.OrginPassword" placeholder="请输入原始密码"></el-input>
+                </el-form-item>
+                <el-form-item label="新密码" prop="NewPassword">
+                    <el-input type="password" v-model.trim="pwdForm.NewPassword" placeholder="请输入新密码"></el-input>
+                </el-form-item>
+                <el-form-item label="确认密码" prop="TwoPassword">
+                    <el-input type="password" v-model.trim="pwdForm.TwoPassword" placeholder="请再次输入新密码"></el-input>
+                </el-form-item>
+            </el-form>
+            <div style="display: flex;justify-content: flex-end;">
+                <el-button type="warning" @click="ChangePassword">修改密码</el-button>
             </div>
         </el-card>
 
@@ -53,6 +71,7 @@ export default {
         return {
             editShow: false,
             formData: {},
+            pwdForm: {},
             rules: {
                 UserName: [
                     { required: true, message: '请输入账号', trigger: 'blur' },
@@ -98,6 +117,17 @@ export default {
                     { required: true, message: '请输入头像', trigger: 'blur' },
                 ],
             },
+            pwdRules: {
+                OrginPassword: [
+                    { required: true, message: '请输入原始密码', trigger: 'blur' },
+                ],
+                NewPassword: [
+                    { required: true, message: '请输入新密码', trigger: 'blur' },
+                ],
+                TwoPassword: [
+                    { required: true, message: '请再次输入新密码', trigger: 'blur' },
+                ],
+            },
 
         }
     },
@@ -133,7 +163,32 @@ export default {
                     return false;
                 }
             });
-        }, //返回上一个页面
+        },
+        async ChangePassword() {
+            this.$refs.pwdFormRef.validate(async (valid) => {
+                if (valid) {
+                    if (this.formData.Password !== this.pwdForm.OrginPassword) {
+                        this.$message.error("原始密码错误");
+                        return;
+                    }
+                    if (this.pwdForm.NewPassword !== this.pwdForm.TwoPassword) {
+                        this.$message.error("确认密码和新密码不一致");
+                        return;
+                    }
+                    if (this.pwdForm.OrginPassword === this.pwdForm.NewPassword) {
+                        this.$message.error("新密码不能和原始密码相同");
+                        return;
+                    }
+                    this.formData.Password = this.pwdForm.TwoPassword;
+                    let { Success } = await this.$Post("/User/CreateOrEdit", this.formData);
+                    if (Success) {
+                        this.$message.success("密码修改成功，请重新登录");
+                        store.dispatch("Logout");
+                        this.$router.push("/Login");
+                    }
+                }
+            });
+        },
         goBack() {
             this.$router.go(-1)
         }

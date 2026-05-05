@@ -5,7 +5,7 @@
 
         <div class="margin-top-lg card">
             <el-form v-if="editorShow == true" ref="editModalForm" :rules="editModalFormRules" :model="formData"
-                label-width="140px" size="mini">
+                label-width="140px" size="mini" class="order-form">
                 <el-row :gutter="10" class="EditFromBody">
 
 
@@ -167,4 +167,18 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+@media (max-width: 768px) {
+    .order-form /deep/ .el-form-item__label {
+        float: none;
+        text-align: left;
+        line-height: 1.2;
+        padding: 0 0 6px;
+        width: auto !important;
+    }
+
+    .order-form /deep/ .el-form-item__content {
+        margin-left: 0 !important;
+    }
+}
+</style>

@@ -4,6 +4,10 @@
             <template slot="content">
                 <span class="integral-text">我的总积分</span>
                 <span class="integral-value">{{ MyIntegralData.TotalIntegral }}</span>
+                <span class="balance-separator">|</span>
+                <span class="balance-text">余额</span>
+                <span class="balance-amount">¥ {{ balance }}</span>
+                <el-button type="text" size="small" class="recharge-link" @click="$router.push('/Front/Recharge')">去充值</el-button>
             </template>
         </el-page-header>
 
@@ -35,8 +39,8 @@
 
         <PaginationTable ref="PaginationTableId" url="/Integral/List" :column="dataColum" :where="where">
             <template v-slot:header>
-                <el-button type="primary" size="mini" plain icon="el-icon-edit"
-                    @click="OverdueTimesClear()">积分兑换逾期次数</el-button>
+                <el-button type="primary" size="mini" plain icon="el-icon-gift" @click="$router.push('/Front/GiftMall')">积分兑换礼品</el-button>
+                <el-button type="primary" size="mini" plain icon="el-icon-edit" @click="OverdueTimesClear()">积分兑换逾期次数</el-button>
             </template>
 
         </PaginationTable>
@@ -56,6 +60,7 @@ export default {
     data() {
 
         return {
+            balance: '0.00',
             where: {
                 UserId: store.getters.UserId
             },
@@ -115,7 +120,7 @@ export default {
     },
     created() {
         this.GetMyIntegralData();
-
+        this.GetBalance();
     },
     methods: {
         /**
@@ -135,6 +140,13 @@ export default {
         async GetMyIntegralData() {
             let { Data } = await this.$Post("/Integral/GetMyIntegralData", {})
             this.MyIntegralData = Data;
+        },
+        //得到余额
+        async GetBalance() {
+            const res = await this.$Post("/Balance/GetMyBalance", {})
+            if (res && res.Success) {
+                this.balance = res.Data.Balance || '0.00';
+            }
         },
         //清空逾期次数
         async OverdueTimesClear() {
@@ -179,5 +191,26 @@ export default {
     line-height: 1.8;
     font-weight: 700;
     text-align: center;
+}
+
+.balance-separator {
+    color: var(--lib-border);
+    margin: 0 4px;
+}
+
+.balance-text {
+    color: var(--lib-text-primary);
+}
+
+.balance-amount {
+    font-weight: 700;
+    color: var(--lib-primary);
+    font-size: 18px;
+}
+
+.recharge-link {
+    margin-left: 8px;
+    color: var(--lib-primary);
+    font-weight: 600;
 }
 </style>

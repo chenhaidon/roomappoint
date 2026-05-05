@@ -43,4 +43,14 @@ public class SelectController {
         return PagedResult.GetInstance(rs, rs.stream().count());
     }
 
+    /**
+     * 反馈状态枚举接口
+     */
+    @RequestMapping(value = "/FeedbackStatusEnum", method = RequestMethod.POST)
+    public PagedResult<SelectResult> FeedbackStatusEnum() {
+
+        var rs = Arrays.stream(com.example.web.enums.FeedbackStatusEnum.values()).map(n -> new SelectResult(n.toString(), n.name(), Integer.toString(n.index()), "")).toList();
+        return PagedResult.GetInstance(rs, rs.stream().count());
+    }
+
 }

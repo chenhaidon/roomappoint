@@ -58,9 +58,25 @@ export const frontRouters = [
                 component: () => import("@/views/Front/ToOrder")
             },
             {
+                path: "/Front/AnnouncementList",
+                meta: {
+                    title: "公告",
+                    isAdmin: false,
+                },
+                component: () => import("@/views/Front/AnnouncementList")
+            },
+            {
+                path: "/Front/AnnouncementDetail",
+                meta: {
+                    title: "公告详情",
+                    isAdmin: false,
+                },
+                component: () => import("@/views/Front/AnnouncementDetail")
+            },
+            {
                 path: "/Front/AppointRecordList",
                 meta: {
-                    title: "我的预约",
+                    title: "我的预约记录",
                     isAdmin: false,
                 },
                 component: () => import("@/views/Front/AppointRecordList")
@@ -72,6 +88,22 @@ export const frontRouters = [
                     isAdmin: false,
                 },
                 component: () => import("@/views/Front/IntegralList")
+            },
+            {
+                path: "/Front/GiftMall",
+                meta: {
+                    title: "积分兑换礼品",
+                    isAdmin: false,
+                },
+                component: () => import("@/views/Front/GiftMall")
+            },
+            {
+                path: "/Front/GiftRedeemMyList",
+                meta: {
+                    title: "我的兑换记录",
+                    isAdmin: false,
+                },
+                component: () => import("@/views/Front/GiftRedeemMyList")
             },
             {
                 path: "/Front/UserPerson",
@@ -88,6 +120,30 @@ export const frontRouters = [
                     isAdmin: false,
                 },
                 component: () => import("@/views/Front/PasswordEdit")
+            },
+            {
+                path: "/Front/FeedbackList",
+                meta: {
+                    title: "意见反馈",
+                    isAdmin: false,
+                },
+                component: () => import("@/views/Front/FeedbackList")
+            },
+            {
+                path: "/Front/Recharge",
+                meta: {
+                    title: "余额充值",
+                    isAdmin: false,
+                },
+                component: () => import("@/views/Front/Recharge")
+            },
+            {
+                path: "/Front/BalanceRecordList",
+                meta: {
+                    title: "余额明细",
+                    isAdmin: false,
+                },
+                component: () => import("@/views/Front/BalanceRecordList")
             }
 
 
@@ -165,6 +221,32 @@ export const adminRouters = [{
         },
 
         {
+            path: "/Admin/GiftList",
+            meta: {
+                title: "礼品",
+                isAdmin: true,
+            },
+            component: () => import("@/views/Admin/GiftList")
+        },
+        {
+            path: "/Admin/GiftRedeemList",
+            meta: {
+                title: "兑换记录",
+                isAdmin: true,
+            },
+            component: () => import("@/views/Admin/GiftRedeemList")
+        },
+
+        {
+            path: "/Admin/AnnouncementList",
+            meta: {
+                title: "公告",
+                isAdmin: true,
+            },
+            component: () => import("@/views/Admin/AnnouncementList")
+        },
+
+        {
             path: "/Admin/RoomList",
             meta: {
                 title: "自习室",
@@ -172,7 +254,6 @@ export const adminRouters = [{
             },
             component: () => import("@/views/Admin/RoomList")
         },
-
         {
             path: "/Admin/SeatList",
             meta: {
@@ -203,6 +284,30 @@ export const adminRouters = [{
                 isAdmin: true,
             },
             component: () => import("@/views/Admin/GetAppointRoomRealTimeData")
+        },
+        {
+            path: "/Admin/Ops",
+            meta: {
+                title: "运维",
+                isAdmin: true,
+            },
+            component: () => import("@/views/Admin/Ops")
+        },
+        {
+            path: "/Admin/AiConfig",
+            meta: {
+                title: "AI助手配置",
+                isAdmin: true,
+            },
+            component: () => import("@/views/Admin/AiConfig")
+        },
+        {
+            path: "/Admin/FeedbackList",
+            meta: {
+                title: "反馈管理",
+                isAdmin: true,
+            },
+            component: () => import("@/views/Admin/FeedbackList")
         },
 
     ]

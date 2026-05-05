@@ -3,8 +3,8 @@
         <el-page-header class="card margin-top-lg" @back="goBack" :content="RoomDetail.Name">
         </el-page-header>
         <div class=" card margin-top-lg margin-bottom-lg">
-            <div>
-                <img :src="NormalizeImage(RoomDetail.Cover)" style="width: 100%;border-radius: 10px;">
+            <div class="room-cover-wrap">
+                <img :src="NormalizeImage(RoomDetail.Cover)" class="room-cover-img">
             </div>
             <div class="container">
                 <el-tabs v-model="activeName">
@@ -225,6 +225,19 @@ export default {
 </script>
 
 <style scoped>
+.room-cover-wrap {
+    max-height: 360px;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.room-cover-img {
+    width: 100%;
+    height: 360px;
+    object-fit: cover;
+    display: block;
+}
+
 .content {
     font-family: Arial, sans-serif;
     font-size: 14px;
@@ -234,6 +247,8 @@ export default {
 
 .seat-list {
     margin: 0 auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .seat-list .seat-row {
@@ -249,6 +264,20 @@ export default {
     margin-left: 20px;
     width: 60px;
     height: 70px;
+}
+
+@media (max-width: 768px) {
+    .seat-list .seat-row .seat-col {
+        margin-top: 12px;
+        margin-left: 12px;
+        width: 54px;
+        height: 64px;
+    }
+
+    .seat-list .seat-row .seat-col img {
+        width: 44px;
+        height: 44px;
+    }
 }
 
 .seat-list .seat-row .seat-col img {
@@ -271,7 +300,6 @@ export default {
     display: flex;
     margin-bottom: 15px;
     border-bottom: 1px dashed rgb(129, 127, 127);
-
 }
 
 .comment-list .comment-item .head {
@@ -291,8 +319,6 @@ export default {
     font-size: 13px;
     margin-left: 10px;
     color: #333;
-
-
 }
 
 .tip {

@@ -70,8 +70,8 @@ public class FileController {
                 //结束流
                 fileOutputStream.flush();
 
-                //定义一个返回给前端的路径地址（对外统一用 /uploads 前缀）
-                String url = "/uploads/" + time + "/" + originFileName;
+                //返回COS完整URL
+                String url = "https://chd-1314768655.cos-website.ap-shanghai.myqcloud.com/uploads/" + time + "/" + originFileName;
                 //加入到返回的列表中
                 fileResultDtos.add(new FileResultDto(url, originFileName));
 

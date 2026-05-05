@@ -26,8 +26,13 @@ RoomAppoint.springboot/.mvn/wrapper/maven-wrapper.jar
 uploads/
 
 # Local / sensitive
+.env
 roomappoint.sql
 分享链接.txt
+
+# Scripts / large binaries
+scripts/1panel-v2.1.10-linux-amd64.tar.gz
+scripts/1panel-v2.1.10-linux-amd64/
 
 # Build artifacts
 *.class

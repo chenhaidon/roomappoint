@@ -259,7 +259,7 @@ public class AppointRecordServiceImpl extends ServiceImpl<AppointRecordMapper, A
         Integer cancelCount = _AppUserMapper.selectById(input.getUserId()).getOverdueTimes();
         if (cancelCount != null) {
             Room room = _RoomMapper.selectById(input.getRoomId());
-            if (room.getEveryMonCancelCount() < cancelCount) {
+            if (room.getEveryMonCancelCount() <= cancelCount) {
                 throw new CustomException("本月取消次数超过限制");
             }
         }

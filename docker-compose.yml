@@ -3,6 +3,8 @@ services:
     image: mysql:8.0
     container_name: roomappoint-mysql
     restart: always
+    ports:
+      - "127.0.0.1:3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DB}
@@ -32,7 +34,7 @@ services:
       MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       TZ: Asia/Shanghai
     volumes:
-      - uploads_data:/app/uploads
+      - /home/ubuntu/cos_uploads:/app/uploads
     networks:
       - roomappoint-net
 

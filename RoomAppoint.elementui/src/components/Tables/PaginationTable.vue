@@ -7,7 +7,7 @@
                     <slot name="header"></slot>
                 </template>
             </div>
-            <div class="tb-body">
+            <div class="tb-body mobile-scroll">
                 <el-table :show-summary="false" v-loading="listLoading" :data="datalist" @row-click="rowClick"
                     element-loading-text="加载数据中~~~" fit :stripe="true" highlight-current-row
                     @selection-change="handleSelectionChange">
@@ -304,7 +304,7 @@ export default {
             if (!name) {
                 return undefined;
             }
-            if (!obj) { return undefined };
+            if (!obj) { return undefined }
             if (name.indexOf(".") != -1) {
                 var array = name.split(".");
 

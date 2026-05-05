@@ -1,32 +1,81 @@
 :root {
+    /* 主色 — 暖蓝灰 */
+    --lib-primary: #2E4A62;
+    --lib-primary-light: #3a6b8c;
+    --lib-primary-dark: #1a3148;
+    --lib-primary-soft: #EBF0F5;
+
+    /* 背景 — 羊皮纸暖色 */
     --lib-bg-page: #F7F4EE;
-    --lib-bg-surface: #FFFCF7;
-    --lib-text-primary: #1F2A37;
-    --lib-text-secondary: #5B6675;
+    --lib-bg-surface: #FFFFFF;
+    --lib-bg-muted: #F5F1E8;
+
+    /* 文本 */
+    --lib-text-primary: #2E4A62;
+    --lib-text-secondary: #6B7280;
+
+    /* 强调色 */
     --lib-accent: #2E4A62;
-    --lib-accent-soft: #EAF0F5;
-    --lib-wood: #A67C52;
-    --lib-border: #E6DED1;
-    --lib-success: #2F7D5B;
-    --lib-warning: #B47D2A;
-    --lib-danger: #B94A48;
-    --lib-radius-md: 10px;
-    --lib-radius-lg: 14px;
-    --lib-shadow-sm: 0 3px 12px rgba(31, 42, 55, 0.06);
-    --lib-shadow-md: 0 10px 30px rgba(31, 42, 55, 0.1);
+    --lib-accent-soft: #EBF0F5;
+    --lib-wood: #2E4A62;
+
+    /* 边框与阴影 */
+    --lib-border: #E2DDD3;
+    --lib-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --lib-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+    --lib-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+
+    /* 状态色 */
+    --lib-success: #059669;
+    --lib-success-soft: #D1FAE5;
+    --lib-warning: #F59E0B;
+    --lib-warning-soft: #FEF3C7;
+    --lib-danger: #DC2626;
+    --lib-danger-soft: #FEE2E2;
+
+    /* 圆角 */
+    --lib-radius-sm: 8px;
+    --lib-radius-md: 12px;
+    --lib-radius-lg: 16px;
+    --lib-radius-xl: 20px;
+
+    /* 间距 */
     --lib-space-xs: 6px;
     --lib-space-sm: 12px;
-    --lib-space-md: 18px;
-    --lib-space-lg: 26px;
+    --lib-space-md: 16px;
+    --lib-space-lg: 24px;
     --lib-space-xl: 36px;
-    --lib-container: 1280px;
+
+    /* 容器 */
+    --lib-container: 1200px;
+}
+
+@media (max-width: 768px) {
+    :root {
+        --lib-container: 100%;
+        --lib-space-sm: 10px;
+        --lib-space-md: 12px;
+        --lib-space-lg: 16px;
+    }
+
+    body {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --lib-space-sm: 8px;
+        --lib-space-md: 10px;
+        --lib-space-lg: 14px;
+    }
 }
 
 html,
 body {
     height: 100%;
-    font-family: 'Microsoft YaHei', sans-serif, 'Helvetica Neue', Helvetica, Arial,
-        '黑体', '宋体', Arial;
+    font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont,
+        'Helvetica Neue', Helvetica, Arial, sans-serif;
     -webkit-tap-highlight-color: transparent;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -37,6 +86,23 @@ body {
     color: var(--lib-text-primary);
     background: var(--lib-bg-page);
     line-height: 1.6;
+}
+
+/* 全局过渡 */
+*,
+*::before,
+*::after {
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* helpers */
+.mobile-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.mobile-scroll /deep/ .el-table__body-wrapper {
+    overflow-x: auto;
 }
 
 /* 重置各标签的默认样式 */
@@ -85,13 +151,10 @@ ul {
     padding: 0;
     font-style: normal;
     box-sizing: border-box;
-    /*  自动换行 */
     word-wrap: break-word;
-    /*  强制英文单词断行 */
     word-break: break-all;
 }
 
-/*  设置标签为块级分类 */
 article,
 aside,
 details,
@@ -106,13 +169,12 @@ section {
     display: block;
 }
 
-/* 去除input标签的默认样式 */
 button,
 input,
 textarea {
     -webkit-appearance: none;
-    font-family: 'Microsoft YaHei', sans-serif, 'Helvetica Neue', Helvetica, Arial,
-        '黑体', '宋体', Arial;
+    font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont,
+        'Helvetica Neue', Helvetica, Arial, sans-serif;
     border: 0;
     margin: 0;
     padding: 0;
@@ -122,20 +184,17 @@ textarea {
     background-color: transparent;
 }
 
-/*  禁止多文本框手动拖动大小 */
 textarea {
     resize: none;
     -webkit-appearance: none;
 }
 
-/* 去掉按下的阴影盒子 */
 input,
 textarea,
 a {
     -webkit-tap-highlight-color: transparent;
 }
 
-/*  清除a标签下划线 */
 a,
 a:visited {
     text-decoration: none;
@@ -147,41 +206,37 @@ a:hover {
     outline: none;
 }
 
-/*  清除列表前面的点 */
 ol,
 li,
 ul {
     list-style: none;
 }
 
-/*  清除IE下图片的边框 */
 img {
     border-style: none;
     font-size: 0;
 }
 
-/*  解决chrome浏览器默认黄色背景问题 */
 input:-webkit-autofill,
 textarea:-webkit-autofill,
 select:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 1000px #fff inset;
 }
 
-/*  设置默认滚动条样式 */
 ::-webkit-input-placeholder {
-    color: #afbdcc;
+    color: #a5a0b8;
 }
 
 :-moz-placeholder {
-    color: #afbdcc;
+    color: #a5a0b8;
 }
 
 ::-moz-placeholder {
-    color: #afbdcc;
+    color: #a5a0b8;
 }
 
 :-ms-input-placeholder {
-    color: #afbdcc;
+    color: #a5a0b8;
 }
 
 ::-webkit-scrollbar {
@@ -190,21 +245,25 @@ select:-webkit-autofill {
 }
 
 ::-webkit-scrollbar-track {
-    background-color: #f5f5f5;
+    background-color: #f7f4ee;
 }
 
 ::-webkit-scrollbar-track-piece {
-    background-color: #f5f5f5;
+    background-color: #f7f4ee;
     border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #cccccc;
+    background-color: #c5bfb3;
     border-radius: 6px;
 }
 
+::-webkit-scrollbar-thumb:hover {
+    background-color: #a8a196;
+}
+
 ::-webkit-scrollbar-corner {
-    background-color: #f5f5f5;
+    background-color: #f7f4ee;
 }
 
 ::-webkit-resizer {

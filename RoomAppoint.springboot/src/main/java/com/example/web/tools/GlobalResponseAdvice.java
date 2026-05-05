@@ -41,6 +41,9 @@ public class GlobalResponseAdvice  implements ResponseBodyAdvice<Object> {
       else if(body instanceof org.springframework.core.io.Resource){
           return body;
       }
+      else if(body instanceof org.springframework.web.servlet.mvc.method.annotation.SseEmitter){
+          return body;
+      }
       else{
          return ResponseData.GetResponseDataInstance(body,"成功",true);
       }

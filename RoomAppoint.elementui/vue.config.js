@@ -17,13 +17,15 @@ module.exports = {
   devServer: {
     host: '0.0.0.0',
     port: 8081,
-    allowedHosts: 'all', // 允许所有 Host，或使用 ['6314iq108bs1.vicp.fun']
+    allowedHosts: 'all',
     client: {
-      // 取消编译错误 全屏覆盖
       overlay: false,
-      webSocketURL: {
-        hostname: '6314iq108bs1.vicp.fun',
-        port: 8081,
+    },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:7245',
+        changeOrigin: true,
+        pathRewrite: { '^/api': '' },
       },
     },
   },

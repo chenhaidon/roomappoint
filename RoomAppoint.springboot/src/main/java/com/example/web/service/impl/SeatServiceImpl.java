@@ -263,11 +263,12 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat> implements Se
         List<Seat> seats = _SeatMpper.selectList(Wrappers.<Seat>lambdaQuery().eq(Seat::getRoomId, input.getRoomId()));
 
 
-        //查询选择日期的预约情况
+        //查询选择日期的有效预约情况（只查待使用和使用中的）
         List<AppointRecord> appointRecords = _AppointRecordMapper.selectList(
                 Wrappers.<AppointRecord>lambdaQuery().eq(AppointRecord::getRoomId, input.getRoomId())
                         .ge(AppointRecord::getAppointDate, input.getSelectDate())
-                        .lt(AppointRecord::getAppointDate, input.getSelectDate().plusDays(1)));
+                        .lt(AppointRecord::getAppointDate, input.getSelectDate().plusDays(1))
+                        .in(AppointRecord::getAppointStatus, AppointStatusEnum.待使用.index(), AppointStatusEnum.使用中.index()));
 
         List<List<SeatDto>> amSeatDtoList = new ArrayList<>();
         List<List<SeatDto>> pmSeatDtoList = new ArrayList<>();
@@ -293,9 +294,6 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat> implements Se
                 if (Extension.isNullOrZero(amSeatDto.getId()) == false) {
                     long count = appointRecords.stream()
                             .filter(x -> x.getSeatId().equals(amSeatDto.getId()) && x.getAppointDateType() == AppointDateTypeEnum.上午.index())
-                            .filter(x -> (x.getAppointStatus() == AppointStatusEnum.使用中.index()
-                                    || x.getAppointStatus() == AppointStatusEnum.待使用.index()
-                                   ))
                             .count();
                     amSeatDto.setIsOccupy(count > 0);
                 }
@@ -307,10 +305,7 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat> implements Se
                 pmSeatDto.setIsOccupy(false);
                 if (Extension.isNullOrZero(pmSeatDto.getId()) == false) {
                     long count = appointRecords.stream()
-                            .filter(x -> x.getSeatId().equals(amSeatDto.getId()) && x.getAppointDateType() == AppointDateTypeEnum.下午.index())
-                            .filter(x -> (x.getAppointStatus() == AppointStatusEnum.使用中.index()
-                                    || x.getAppointStatus() == AppointStatusEnum.待使用.index()
-                                   ))
+                            .filter(x -> x.getSeatId().equals(pmSeatDto.getId()) && x.getAppointDateType() == AppointDateTypeEnum.下午.index())
                             .count();
                     pmSeatDto.setIsOccupy(count > 0);
                 }
@@ -323,10 +318,7 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat> implements Se
                 nmSeatDto.setIsOccupy(false);
                 if (Extension.isNullOrZero(nmSeatDto.getId()) == false) {
                     long count = appointRecords.stream()
-                            .filter(x -> x.getSeatId().equals(amSeatDto.getId()) && x.getAppointDateType() == AppointDateTypeEnum.夜晚.index())
-                            .filter(x -> (x.getAppointStatus() == AppointStatusEnum.使用中.index()
-                                    || x.getAppointStatus() == AppointStatusEnum.待使用.index()
-                                 ))
+                            .filter(x -> x.getSeatId().equals(nmSeatDto.getId()) && x.getAppointDateType() == AppointDateTypeEnum.夜晚.index())
                             .count();
                     nmSeatDto.setIsOccupy(count > 0);
                 }

@@ -47,7 +47,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="24">
-                        <el-form-item label="每月可取消次数" prop="EveryMonCancelCount">
+                        <el-form-item label="逾期次数次数" prop="EveryMonCancelCount">
                             <el-input type="number" v-model.trim="formData.EveryMonCancelCount" placeholder="请输入每月可取消次数"
                                 :clearable="true"></el-input>
                         </el-form-item>

@@ -7,6 +7,7 @@ import lombok.Data;
 import org.apache.commons.beanutils.BeanUtils;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -61,6 +62,12 @@ public class AppUser extends BaseEntity {
      */
     @JsonProperty("OverdueTimes")
     private Integer OverdueTimes;
+
+    /**
+     * 用户余额
+     */
+    @JsonProperty("Balance")
+    private BigDecimal Balance;
 
 
     /**

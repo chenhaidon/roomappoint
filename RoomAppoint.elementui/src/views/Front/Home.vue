@@ -2,13 +2,30 @@
     <div>
 
         <div class="margin-top-lg card home-carousel-card">
-            <el-carousel :interval="5000" arrow="always" height="400px">
+            <el-carousel :interval="5000" arrow="always" height="240px">
                 <el-carousel-item v-for="item in BannerList" :key="item.Id">
                     <div class="banner-item-wrap">
                         <img :src="NormalizeImage(item.Cover)" class="banner-image">
                     </div>
                 </el-carousel-item>
             </el-carousel>
+        </div>
+
+        <div class="card margin-top-lg">
+            <div class="item-header notice-header-row">
+                <span>最新公告</span>
+                <el-button type="text" @click="ToAnnouncementList">查看更多</el-button>
+            </div>
+            <div class="notice-brief-list" v-if="AnnouncementList.length > 0">
+                <div class="notice-brief-item" v-for="item in AnnouncementList" :key="item.Id" @click="ToAnnouncementDetail(item)">
+                    <div class="notice-left">
+                        <el-tag v-if="item.IsTop == 1" size="mini" type="danger">置顶</el-tag>
+                        <span class="notice-brief-title">{{ item.Title }}</span>
+                    </div>
+                    <div class="notice-brief-time">{{ item.PublishTime || item.CreationTime }}</div>
+                </div>
+            </div>
+            <el-empty v-else description="暂无公告"></el-empty>
         </div>
 
         <div class="card margin-top-lg">
@@ -43,13 +60,25 @@ export default {
     data() {
         return {
             BannerList: [],
-            RoomList: []
+            RoomList: [],
+            AnnouncementList: [],
+            isMobile: false,
         }
     },
     created() {
+        this.UpdateIsMobile();
+        window.addEventListener('resize', this.UpdateIsMobile);
+
         this.BannerListApi();
+        this.AnnouncementListApi();
+    },
+    beforeDestroy() {
+        window.removeEventListener('resize', this.UpdateIsMobile);
     },
     methods: {
+        UpdateIsMobile() {
+            this.isMobile = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+        },
         NormalizeImage(value) {
             if (!value) {
                 return "";
@@ -71,6 +100,22 @@ export default {
             const Items = (res && res.Success && res.Data && res.Data.Items) ? res.Data.Items : [];
             this.BannerList = Items;
         },
+        async AnnouncementListApi() {
+            const res = await this.$Post("/Announcement/FrontList", { Limit: 5, Page: 1 });
+            const Items = (res && res.Success && res.Data && res.Data.Items) ? res.Data.Items : [];
+            this.AnnouncementList = Items;
+        },
+        ToAnnouncementList() {
+            this.$router.push({ path: "/Front/AnnouncementList" });
+        },
+        ToAnnouncementDetail(item) {
+            this.$router.push({
+                path: "/Front/AnnouncementDetail",
+                query: {
+                    Id: item.Id
+                }
+            });
+        },
         //跳转到自习室详情
         async ToRoom(item) {
             this.$router.push({
@@ -90,32 +135,40 @@ export default {
 <style scoped>
 .home-carousel-card {
     padding: var(--lib-space-sm);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #fff;
 }
 
 .banner-item-wrap {
     width: 100%;
     height: 100%;
     border-radius: var(--lib-radius-lg);
-    overflow: hidden;
+    overflow: visible;
     border: 1px solid var(--lib-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .banner-image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
 }
 
 .room-list {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: var(--lib-space-lg);
     margin-top: var(--lib-space-md);
 }
 
 .room-list .room-item {
-    flex: 1 1 280px;
+    flex: 0 1 280px;
     min-width: 240px;
     max-width: 360px;
     cursor: pointer;
@@ -160,5 +213,63 @@ export default {
     color: var(--lib-text-primary);
     font-weight: 700;
     letter-spacing: 1px;
+}
+
+.notice-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.notice-brief-list {
+    margin-top: var(--lib-space-md);
+}
+
+.notice-brief-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--lib-space-sm);
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--lib-border);
+    cursor: pointer;
+}
+
+.notice-left {
+    display: flex;
+    align-items: center;
+    gap: var(--lib-space-xs);
+    min-width: 0;
+}
+
+.notice-brief-title {
+    color: var(--lib-text-primary);
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.notice-brief-time {
+    color: #909399;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .room-list {
+        gap: var(--lib-space-md);
+    }
+
+    .room-list .room-item {
+        flex: 1 1 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .room-list .room-item .room-cover {
+        height: 160px;
+    }
 }
 </style>

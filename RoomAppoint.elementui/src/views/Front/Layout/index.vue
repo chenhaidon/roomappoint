@@ -2,7 +2,45 @@
     <div>
         <el-container>
             <el-header class="front-header">
-                <el-menu :default-active="active" class="main-container front-menu" mode="horizontal" text-color="black"
+                <div v-if="isMobile" class="mobile-header main-container">
+                    <div class="mobile-brand" @click="ToPath('/Front/Home')">
+                        <img class="brand-logo" :src="require('@/assets/logo.jpg')">
+                        <span class="mobile-title">志高自习室预约</span>
+                    </div>
+                    <div class="mobile-actions">
+                        <el-button type="text" class="mobile-menu-btn" icon="el-icon-menu" @click="drawerVisible = true">菜单</el-button>
+                    </div>
+
+                    <el-drawer :visible.sync="drawerVisible" direction="rtl" size="72%" :with-header="false">
+                        <div class="drawer-body">
+                            <div class="drawer-user" v-if="Token">
+                                <el-avatar v-if="avatarUrl" :size="36" :src="avatarUrl" class="user-avatar" />
+                                <div class="drawer-user-meta">
+                                    <div class="drawer-user-name">{{ (UserInfo && UserInfo.UserName) || '' }}</div>
+                                    <div class="drawer-user-role">{{ (UserInfo && UserInfo.RoleTypeFormat) || '' }}</div>
+                                </div>
+                            </div>
+
+                            <div class="drawer-nav">
+                                <el-button type="text" class="drawer-link" @click="Go('/Front/AnnouncementList')">公告</el-button>
+                                <el-button v-if="Token" type="text" class="drawer-link" @click="Go('/Front/IntegralList')">我的积分</el-button>
+                                <el-button v-if="Token" type="text" class="drawer-link" @click="Go('/Front/BalanceRecordList')">我的余额</el-button>
+                                <el-button v-if="Token" type="text" class="drawer-link" @click="Go('/Front/GiftMall')">积分兑换</el-button>
+                                <el-button v-if="Token" type="text" class="drawer-link" @click="Go('/Front/GiftRedeemMyList')">我的兑换记录</el-button>
+                                <el-button v-if="Token" type="text" class="drawer-link" @click="Go('/Front/AppointRecordList')">我的预约记录</el-button>
+                                <el-button v-if="Token" type="text" class="drawer-link" @click="Go('/Front/FeedbackList')">意见反馈</el-button>
+                                <el-button v-if="Token" type="text" class="drawer-link" @click="Go('/Front/UserPerson')">个人信息</el-button>
+
+                                <el-button v-if="!Token" type="primary" class="drawer-primary" @click="Go('/Login')">登录</el-button>
+                                <el-button v-if="!Token" type="default" class="drawer-primary" @click="Go('/Register')">注册</el-button>
+
+                                <el-button v-if="Token" type="danger" plain class="drawer-primary" @click="LoginOut()">退出</el-button>
+                            </div>
+                        </div>
+                    </el-drawer>
+                </div>
+
+                <el-menu v-else :default-active="active" class="main-container front-menu" mode="horizontal" text-color="black"
                     active-text-color="#2E4A62">
                     <el-menu-item index="" class="brand-logo-item">
                         <img class="brand-logo" :src="require('@/assets/logo.jpg')">
@@ -18,11 +56,15 @@
                             {{ UserInfo && UserInfo.UserName }}
                         </template>
                         <el-menu-item @click="ToPath('/Front/IntegralList')">我的积分</el-menu-item>
+                        <el-menu-item @click="ToPath('/Front/BalanceRecordList')">我的余额</el-menu-item>
+                        <el-menu-item @click="ToPath('/Front/GiftRedeemMyList')">我的兑换记录</el-menu-item>
                         <el-menu-item @click="ToPath('/Front/AppointRecordList')">我的预约记录</el-menu-item>
+                        <el-menu-item @click="ToPath('/Front/FeedbackList')">意见反馈</el-menu-item>
                         <el-menu-item @click="ToUserInfo()">个人信息</el-menu-item>
-                        <el-menu-item @click="ToEditPassword()">修改密码</el-menu-item>
                         <el-menu-item @click="LoginOut()">退出</el-menu-item>
                     </el-submenu>
+                    <el-menu-item class="menu-right menu-action" v-if="Token" @click="ToPath('/Front/GiftMall')">积分兑换</el-menu-item>
+                    <el-menu-item class="menu-right menu-action" @click="ToPath('/Front/AnnouncementList')">公告</el-menu-item>
                 </el-menu>
             </el-header>
             <el-main class="main-container main-box">
@@ -33,22 +75,32 @@
                 <div class="footer-content">系统归 志高自习室预约所有</div>
             </el-footer>
         </el-container>
+        <AiChatBubble />
     </div>
 </template>
 
 <script>
 
 import { mapGetters } from 'vuex'
+import AiChatBubble from '@/components/Chat/AiChatBubble.vue'
 import { ReplaceImageHttp } from '@/utils/comm'
 export default {
+    components: { AiChatBubble },
     data() {
         return {
             active: 'home',
+            isMobile: false,
+            drawerVisible: false,
 
         }
     },
     created() {
+        this.UpdateIsMobile();
+        window.addEventListener('resize', this.UpdateIsMobile);
 
+    },
+    beforeDestroy() {
+        window.removeEventListener('resize', this.UpdateIsMobile);
     },
     computed: {
         ...mapGetters(["UserInfo", "Token"]),
@@ -57,6 +109,16 @@ export default {
         }
     },
     methods: {
+        UpdateIsMobile() {
+            this.isMobile = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+            if (!this.isMobile) {
+                this.drawerVisible = false;
+            }
+        },
+        Go(url) {
+            this.drawerVisible = false;
+            this.ToPath(url);
+        },
         NormalizeImage(value) {
             if (!value) {
                 return "";
@@ -87,6 +149,7 @@ export default {
         },
         //退出
         async LoginOut() {
+            this.drawerVisible = false;
             await this.$store.dispatch('Logout')
             this.$router.push(`/Login`);
         },
@@ -125,6 +188,9 @@ export default {
     border-bottom: 1px solid var(--lib-border);
     box-shadow: var(--lib-shadow-sm);
     padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .main-container {
@@ -189,5 +255,87 @@ export default {
 
 .el-main {
     padding: 0 !important;
+}
+
+.mobile-header {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--lib-space-sm);
+    min-width: 0;
+    cursor: pointer;
+}
+
+.mobile-title {
+    font-weight: 700;
+    color: var(--lib-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mobile-menu-btn {
+    padding: 10px 0;
+    color: var(--lib-accent);
+    font-weight: 600;
+}
+
+.drawer-body {
+    padding: var(--lib-space-md);
+}
+
+.drawer-user {
+    display: flex;
+    align-items: center;
+    gap: var(--lib-space-sm);
+    padding-bottom: var(--lib-space-md);
+    border-bottom: 1px solid var(--lib-border);
+    margin-bottom: var(--lib-space-md);
+}
+
+.drawer-user-meta {
+    min-width: 0;
+}
+
+.drawer-user-name {
+    font-weight: 700;
+}
+
+.drawer-user-role {
+    color: var(--lib-text-secondary);
+    font-size: 12px;
+}
+
+.drawer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.drawer-link {
+    text-align: left;
+    justify-content: flex-start;
+    padding: 10px 0;
+    color: var(--lib-text-primary);
+}
+
+.drawer-primary {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .brand-logo {
+        height: 34px;
+    }
+
+    .main-box {
+        min-height: calc(100vh - 126px);
+    }
 }
 </style>
