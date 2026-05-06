@@ -1,5 +1,5 @@
 <template>
-    <div class="auth-page" :class="{ 'auth-page--success': isSuccess }">
+    <div class="auth-page">
         <div class="auth-bg-shape auth-bg-shape--1"></div>
         <div class="auth-bg-shape auth-bg-shape--2"></div>
 
@@ -21,54 +21,61 @@
             <div class="auth-right">
                 <div class="auth-form-wrap">
                     <div class="auth-form-header auth-form-item--enter" style="--delay: 0ms">
-                        <h2 class="auth-title">开始你的专注时刻</h2>
-                        <p class="auth-subtitle">把时间交给学习</p>
+                        <h2 class="auth-title">找回你的密码</h2>
+                        <p class="auth-subtitle">验证身份后重置密码</p>
                     </div>
 
-                    <el-form class="auth-form" ref="loginForm" :model="formData" label-position="top" :rules="rules">
-                        <el-form-item label="账号" prop="UserName" class="auth-form-item--enter" style="--delay: 120ms">
-                            <el-input type="text" v-model.trim="formData.UserName" placeholder="请输入账号"
+                    <el-form class="auth-form" ref="resetForm" :model="formData" label-position="top" :rules="rules">
+                        <el-form-item label="账号" prop="UserName" class="auth-form-item--enter" style="--delay: 80ms">
+                            <el-input type="text" v-model.trim="formData.UserName" placeholder="请输入注册账号"
                                 prefix-icon="el-icon-user" size="large"></el-input>
                         </el-form-item>
 
-                        <el-form-item label="密码" prop="Password" class="auth-form-item--enter" style="--delay: 180ms">
-                            <el-input type="password" v-model.trim="formData.Password" placeholder="请输入密码"
+                        <el-form-item label="邮箱" prop="Email" class="auth-form-item--enter" style="--delay: 140ms">
+                            <el-input v-model.trim="formData.Email" placeholder="请输入注册邮箱"
+                                prefix-icon="el-icon-message" size="large"></el-input>
+                        </el-form-item>
+
+                        <el-form-item label="手机号码" prop="PhoneNumber" class="auth-form-item--enter" style="--delay: 200ms">
+                            <el-input v-model.trim="formData.PhoneNumber" placeholder="请输入注册手机号码"
+                                prefix-icon="el-icon-phone" size="large"></el-input>
+                        </el-form-item>
+
+                        <el-form-item label="新密码" prop="Password" class="auth-form-item--enter" style="--delay: 260ms">
+                            <el-input type="password" v-model.trim="formData.Password" placeholder="请输入新密码"
                                 prefix-icon="el-icon-lock" size="large" show-password></el-input>
                         </el-form-item>
 
-                        <el-form-item label="身份" prop="RoleType" class="auth-form-item--enter" style="--delay: 240ms">
-                            <el-radio-group v-model="formData.RoleType" class="auth-role-group">
-                                <el-radio-button v-for="item in roleOptions" :key="item.Code" :label="item.Code">
-                                    {{ item.Label }}
-                                </el-radio-button>
-                            </el-radio-group>
+                        <el-form-item label="确认密码" prop="ConfirmPassword" class="auth-form-item--enter" style="--delay: 320ms">
+                            <el-input type="password" v-model.trim="formData.ConfirmPassword" placeholder="请再次输入新密码"
+                                prefix-icon="el-icon-lock" size="large" show-password></el-input>
                         </el-form-item>
 
-                        <el-form-item prop="SliderVerified" class="auth-form-item--enter" style="--delay: 300ms">
-                            <SliderCode ref="SliderCode" @verified="formData.SliderVerified = true"></SliderCode>
+                        <el-form-item label="验证码" prop="Code" class="auth-form-item--enter" style="--delay: 380ms">
+                            <div class="auth-code-row">
+                                <el-input v-model.trim="formData.Code" placeholder="请输入验证码"
+                                    prefix-icon="el-icon-key" size="large"></el-input>
+                                <div class="auth-code-canvas">
+                                    <ValidCode ref="ValidCode"></ValidCode>
+                                </div>
+                            </div>
                         </el-form-item>
 
-                        <el-form-item class="auth-form-item--enter" style="--delay: 360ms">
-                            <el-button class="auth-btn auth-btn--primary" :class="{ 'is-loading': isLoading }" type="primary" size="large" @click="LoginBtn">
-                                {{ isLoading ? '登录中' : '进入自习室' }}
-                            </el-button>
-                        </el-form-item>
-
-                        <el-form-item class="auth-form-item--enter" style="--delay: 420ms">
-                            <el-button class="auth-btn auth-btn--ghost" size="large" @click="ToHome">
-                                先随便看看
+                        <el-form-item class="auth-form-item--enter" style="--delay: 440ms">
+                            <el-button class="auth-btn auth-btn--primary" :class="{ 'is-loading': isLoading }" type="primary" size="large" @click="ResetBtn">
+                                {{ isLoading ? '重置中' : '重置密码' }}
                             </el-button>
                         </el-form-item>
                     </el-form>
 
-                    <div class="auth-footer-row auth-form-item--enter" style="--delay: 480ms">
-                        <span class="auth-footer-text">还没有账号？</span>
-                        <RouterLink :to="{ path: '/Register' }">
-                            <span class="auth-link">立即注册</span>
+                    <div class="auth-footer-row auth-form-item--enter" style="--delay: 500ms">
+                        <span class="auth-footer-text">想起密码了？</span>
+                        <RouterLink :to="{ path: '/Login' }">
+                            <span class="auth-link">去登录</span>
                         </RouterLink>
                         <span class="auth-footer-divider">|</span>
-                        <RouterLink :to="{ path: '/ForgotPassword' }">
-                            <span class="auth-link">忘记密码</span>
+                        <RouterLink :to="{ path: '/Register' }">
+                            <span class="auth-link">去注册</span>
                         </RouterLink>
                     </div>
                 </div>
@@ -78,11 +85,10 @@
 </template>
 
 <script>
-import SliderCode from '@/components/Code/SliderCode.vue';
-import store from '@/store';
+import ValidCode from '@/components/Code/canvas.vue'
 export default {
     components: {
-        SliderCode: SliderCode
+        ValidCode: ValidCode
     },
     data() {
         return {
@@ -90,41 +96,74 @@ export default {
             sloganText: '',
             showSloganCursor: false,
             isLoading: false,
-            isSuccess: false,
             formData: {
                 UserName: '',
+                Email: '',
+                PhoneNumber: '',
                 Password: '',
-                RoleType: "",
-                SliderVerified: false
+                ConfirmPassword: '',
+                Code: ''
             },
-            roleOptions: [],
             rules: {
                 UserName: [
                     { required: true, message: '请输入账号', trigger: 'blur' },
                 ],
-                Password: [
-                    { required: true, message: '请输入密码', trigger: 'blur' },
-                ],
-                RoleType: [
-                    { required: true, message: '请选择角色', trigger: 'blur' },
-                ],
-                SliderVerified: [
+                Email: [
+                    { required: true, message: '请输入邮箱', trigger: 'blur' },
                     {
                         validator: (rule, value, callback) => {
-                            if (!value) {
-                                callback(new Error('请完成滑块验证'));
+                            var reg = /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/;
+                            if (!value || !reg.test(value)) {
+                                callback(new Error('请输入正确的邮箱'));
                             } else {
                                 callback();
                             }
-                        }, trigger: 'change'
+                        }, trigger: 'blur'
+                    }
+                ],
+                PhoneNumber: [
+                    { required: true, message: '请输入手机号码', trigger: 'blur' },
+                    {
+                        validator: (rule, value, callback) => {
+                            var reg = /^1[34578]\d{9}$/;
+                            if (!value || !reg.test(value)) {
+                                callback(new Error('请输入正确的手机号'));
+                            } else {
+                                callback();
+                            }
+                        }, trigger: 'blur'
+                    }
+                ],
+                Password: [
+                    { required: true, message: '请输入新密码', trigger: 'blur' },
+                ],
+                ConfirmPassword: [
+                    { required: true, message: '请再次输入新密码', trigger: 'blur' },
+                    {
+                        validator: (rule, value, callback) => {
+                            if (value !== this.formData.Password) {
+                                callback(new Error('两次输入的密码不一致'));
+                            } else {
+                                callback();
+                            }
+                        }, trigger: 'blur'
+                    }
+                ],
+                Code: [
+                    { required: true, message: '请输入验证码', trigger: 'blur' },
+                    {
+                        validator: (rule, value, callback) => {
+                            let identifyCode = this.$refs.ValidCode.getCode();
+                            if (value != identifyCode) {
+                                callback(new Error('验证码不正确'));
+                            } else {
+                                callback();
+                            }
+                        }, trigger: 'blur'
                     }
                 ]
             }
         }
-
-    },
-    created() {
-        this.GetRoleTypeApi();
     },
     mounted() {
         this.startTypewriter();
@@ -141,7 +180,7 @@ export default {
             }
             this.showSloganCursor = true;
             await this.sleep(400);
-            const slogan = '把时间交给学习';
+            const slogan = '找回密码，重新出发';
             for (let i = 0; i < slogan.length; i++) {
                 this.sloganText += slogan[i];
                 await this.sleep(100);
@@ -149,45 +188,38 @@ export default {
             await this.sleep(2000);
             this.showSloganCursor = false;
         },
-        async GetRoleTypeApi() {
-            let { Data: { Items } } = await this.$Post("/Select/RoleType");
-            this.roleOptions = Items
-        },
-        LoginBtn() {
-            this.$refs.loginForm.validate(async (valid) => {
+        ResetBtn() {
+            this.$refs.resetForm.validate(async (valid) => {
                 if (valid) {
                     this.isLoading = true;
                     try {
-                        let res = await store.dispatch("Login", this.formData);
+                        let res = await this.$Post("/User/ResetPassword", {
+                            UserName: this.formData.UserName,
+                            Email: this.formData.Email,
+                            PhoneNumber: this.formData.PhoneNumber,
+                            Password: this.formData.Password
+                        });
                         if (res.Success) {
-                            this.isSuccess = true;
-                            this.$message.success("登录成功!");
-                            await this.sleep(400);
-                            this.$router.push({ path: "/Admin" });
+                            this.$message.success("密码重置成功!");
+                            this.$router.push({ path: "/Login" });
                         } else {
-                            this.$refs.SliderCode.refreshCode();
+                            this.$refs.ValidCode.refreshCode();
                         }
                     } finally {
                         this.isLoading = false;
                     }
                 } else {
-                    this.$message.error("登录验证不通过");
-                    this.$refs.SliderCode.refreshCode();
+                    this.$message.error("请完善信息");
+                    this.$refs.ValidCode.refreshCode();
                     return false;
                 }
             });
-        },
-        ToHome() {
-            this.$router.push({
-                path: "/Front/Home"
-            })
-        },
+        }
     }
 }
 </script>
 
 <style scoped>
-/* 动效参数 */
 .auth-page {
     --login-primary: #3A5F73;
     --login-primary-light: #4A7A8C;
@@ -201,30 +233,17 @@ export default {
     --dur-md: 320ms;
     --dur-lg: 520ms;
 
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 16px;
+    padding: 24px 16px;
     background: var(--login-bg);
     position: relative;
     overflow: hidden;
     box-sizing: border-box;
 }
 
-/* 页面登录成功淡出 */
-.auth-page--success {
-    animation: fadeOut 400ms var(--ease-out) forwards;
-}
-
-@keyframes fadeOut {
-    to {
-        opacity: 0;
-        transform: scale(0.98);
-    }
-}
-
-/* 背景装饰 */
 .auth-bg-shape {
     position: absolute;
     border-radius: 50%;
@@ -247,7 +266,6 @@ export default {
     left: -100px;
 }
 
-/* 容器入场 */
 @keyframes fadeUp {
     from { opacity: 0; transform: translateY(24px); }
     to { opacity: 1; transform: none; }
@@ -255,7 +273,6 @@ export default {
 
 .auth-card {
     width: min(960px, 100%);
-    max-height: calc(100vh - 32px);
     display: flex;
     background: var(--login-card);
     border-radius: 16px;
@@ -269,7 +286,6 @@ export default {
     animation: fadeUp var(--dur-md) var(--ease-out);
 }
 
-/* 左侧氛围区 40% */
 .auth-left {
     width: 40%;
     flex-shrink: 0;
@@ -286,7 +302,6 @@ export default {
     animation: fadeUp var(--dur-lg) var(--ease-out);
 }
 
-/* 暖光呼吸 */
 .auth-left-glow {
     position: absolute;
     top: -20%;
@@ -365,7 +380,6 @@ export default {
     50% { opacity: 0; }
 }
 
-/* 插画轻浮动 */
 .auth-hero-image {
     width: 100%;
     max-width: 260px;
@@ -381,7 +395,6 @@ export default {
     50% { transform: translateY(-6px); }
 }
 
-/* 右侧登录区 60% */
 .auth-right {
     flex: 1;
     min-width: 0;
@@ -389,6 +402,7 @@ export default {
     align-items: center;
     justify-content: center;
     padding: 32px;
+    overflow-y: auto;
 }
 
 .auth-form-wrap {
@@ -397,7 +411,7 @@ export default {
 }
 
 .auth-form-header {
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
 .auth-title {
@@ -414,11 +428,11 @@ export default {
 }
 
 .auth-form {
-    margin-top: 8px;
+    margin-top: 4px;
 }
 
 .auth-form /deep/ .el-form-item {
-    margin-bottom: 22px;
+    margin-bottom: 18px;
 }
 
 .auth-form /deep/ .el-form-item__label {
@@ -433,7 +447,6 @@ export default {
     line-height: 36px;
 }
 
-/* 表单项分段入场 */
 @keyframes itemIn {
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: none; }
@@ -446,10 +459,9 @@ export default {
     animation-delay: var(--delay, 0ms);
 }
 
-/* 输入框交互 */
 .auth-form /deep/ .el-input__inner {
-    height: 48px;
-    line-height: 48px;
+    height: 44px;
+    line-height: 44px;
     background: var(--login-input-bg);
     border-color: #E8E3D9;
     border-radius: 12px;
@@ -468,7 +480,6 @@ export default {
     color: #B8C0C8;
 }
 
-/* 输入框错误抖动 */
 .auth-form /deep/ .el-form-item.is-error .el-input__inner {
     animation: shake var(--dur-md);
 }
@@ -479,33 +490,20 @@ export default {
     75% { transform: translateX(4px); }
 }
 
-.auth-form /deep/ .el-radio-button__inner {
-    padding: 9px 18px;
-    font-size: 13px;
-    border-radius: 10px;
-}
-
-.auth-role-group {
+.auth-code-row {
     display: flex;
-    gap: 0;
+    align-items: center;
+    gap: 12px;
 }
 
-.auth-role-group /deep/ .el-radio-button__inner {
-    border-color: #E8E3D9;
-    color: #8A9BAE;
-    font-weight: 500;
-    background: var(--login-input-bg);
-    transition: all var(--dur-sm) var(--ease-out);
+.auth-code-row .el-input {
+    flex: 1;
 }
 
-.auth-role-group /deep/ .el-radio-button__orig-radio:checked + .el-radio-button__inner {
-    background-color: var(--login-primary);
-    border-color: var(--login-primary);
-    box-shadow: -1px 0 0 0 var(--login-primary);
-    color: #fff;
+.auth-code-canvas {
+    flex-shrink: 0;
 }
 
-/* 主按钮 */
 .auth-btn {
     width: 100%;
     font-weight: 700;
@@ -533,7 +531,6 @@ export default {
     box-shadow: 0 4px 10px rgba(58, 95, 115, 0.2);
 }
 
-/* loading 状态 */
 .auth-btn--primary.is-loading {
     pointer-events: none;
     opacity: 0.85;
@@ -557,23 +554,9 @@ export default {
     to { transform: rotate(360deg); }
 }
 
-.auth-btn--ghost {
-    background: transparent;
-    border: none;
-    color: #A0AAB4;
-    box-shadow: none;
-    letter-spacing: 1px;
-}
-
-.auth-btn--ghost:hover {
-    color: var(--login-primary);
-    background: rgba(58, 95, 115, 0.04);
-}
-
-/* 底部链接 */
 .auth-footer-row {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 16px;
     padding-top: 16px;
     border-top: 1px solid #EDE9DF;
 }
@@ -601,7 +584,6 @@ export default {
     color: #D4A56A;
 }
 
-/* 移动端 */
 @media (max-width: 768px) {
     .auth-page {
         padding: 12px;
@@ -609,7 +591,6 @@ export default {
 
     .auth-card {
         flex-direction: column;
-        max-height: none;
     }
 
     .auth-left {

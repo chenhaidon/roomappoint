@@ -16,7 +16,7 @@ module.exports = {
   //配置开发服务器
   devServer: {
     host: '0.0.0.0',
-    port: 8081,
+    port: 8080,
     allowedHosts: 'all',
     client: {
       overlay: false,

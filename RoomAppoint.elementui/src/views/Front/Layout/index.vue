@@ -11,7 +11,7 @@
                         <el-button type="text" class="mobile-menu-btn" icon="el-icon-menu" @click="drawerVisible = true">菜单</el-button>
                     </div>
 
-                    <el-drawer :visible.sync="drawerVisible" direction="rtl" size="72%" :with-header="false">
+                    <el-drawer :visible.sync="drawerVisible" direction="rtl" size="72%" :with-header="false" :destroy-on-close="true" :modal="true" :append-to-body="true" @close="cleanupDrawer">
                         <div class="drawer-body">
                             <div class="drawer-user" v-if="Token">
                                 <el-avatar v-if="avatarUrl" :size="36" :src="avatarUrl" class="user-avatar" />
@@ -119,6 +119,13 @@ export default {
             this.drawerVisible = false;
             this.ToPath(url);
         },
+        cleanupDrawer() {
+            this.$nextTick(() => {
+                document.querySelectorAll('.el-drawer__wrapper, .v-modal').forEach(el => {
+                    el.parentNode && el.parentNode.removeChild(el);
+                });
+            });
+        },
         NormalizeImage(value) {
             if (!value) {
                 return "";
@@ -150,6 +157,7 @@ export default {
         //退出
         async LoginOut() {
             this.drawerVisible = false;
+            this.cleanupDrawer();
             await this.$store.dispatch('Logout')
             this.$router.push(`/Login`);
         },
@@ -338,4 +346,6 @@ export default {
         min-height: calc(100vh - 126px);
     }
 }
+
+
 </style>

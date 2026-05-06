@@ -195,6 +195,45 @@ public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> impl
     }
 
     /**
+     * 重置密码（忘记密码）
+     * 通过账号+邮箱+手机号验证身份后重置密码
+     */
+    @SneakyThrows
+    @Override
+    public AppUserDto ResetPassword(AppUserDto input) {
+        // 校验必填字段
+        if (Extension.isNullOrEmpty(input.getUserName())) {
+            throw new CustomException("请输入账号");
+        }
+        if (Extension.isNullOrEmpty(input.getEmail())) {
+            throw new CustomException("请输入邮箱");
+        }
+        if (Extension.isNullOrEmpty(input.getPhoneNumber())) {
+            throw new CustomException("请输入手机号码");
+        }
+        if (Extension.isNullOrEmpty(input.getPassword())) {
+            throw new CustomException("请输入新密码");
+        }
+
+        // 根据账号+邮箱+手机号查询用户
+        LambdaQueryWrapper<AppUser> queryWrapper = Wrappers.<AppUser>lambdaQuery()
+                .eq(AppUser::getUserName, input.getUserName())
+                .eq(AppUser::getEmail, input.getEmail())
+                .eq(AppUser::getPhoneNumber, input.getPhoneNumber());
+
+        AppUser appUser = _AppUserMpper.selectOne(queryWrapper);
+        if (appUser == null) {
+            throw new CustomException("账号信息不匹配，请检查输入");
+        }
+
+        // 更新密码
+        appUser.setPassword(input.getPassword());
+        _AppUserMpper.updateById(appUser);
+
+        return appUser.MapToDto();
+    }
+
+    /**
      * 用户导出
      */
     @Override

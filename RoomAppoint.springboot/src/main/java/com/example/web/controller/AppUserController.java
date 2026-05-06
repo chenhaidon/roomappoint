@@ -127,6 +127,14 @@ public class AppUserController {
     }
 
     /**
+     * 重置密码（忘记密码）
+     */
+    @RequestMapping(value = "/ResetPassword", method = RequestMethod.POST)
+    public AppUserDto ResetPassword(@RequestBody AppUserDto input) {
+        return _AppUserService.ResetPassword(input);
+    }
+
+    /**
      * 用户导出
      */
     @RequestMapping(value = "/Export", method = RequestMethod.GET)

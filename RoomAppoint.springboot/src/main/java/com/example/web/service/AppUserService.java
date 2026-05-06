@@ -53,6 +53,11 @@ public interface AppUserService extends IService<AppUser> {
     public AppUserDto Register(AppUserDto input);
 
     /**
+     * 重置密码（忘记密码）
+     */
+    public AppUserDto ResetPassword(AppUserDto input);
+
+    /**
      * 用户导出
      */
     public void Export(@RequestParam String query, HttpServletResponse response) throws IOException;

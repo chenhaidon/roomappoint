@@ -265,12 +265,12 @@ export default {
                     }
 
                     if (element.type == store.getters.ColumnType.IMAGES) {
-                        if (element.template) {
-                            dataItem[`${element.key}`] = ReplaceImageHttp(dataItem[`${element.key}`]?.split(","));
-                        }
-                        else {
-                            dataItem[`${element.key}`] = ReplaceImageHttp(this.GetObjectValue(item, element.key)?.split(","));
-                        }
+                        let rawArr = element.template
+                            ? dataItem[`${element.key}`]?.split(",")
+                            : this.GetObjectValue(item, element.key)?.split(",");
+                        dataItem[`${element.key}`] = Array.isArray(rawArr)
+                            ? rawArr.filter(Boolean).map(url => ReplaceImageHttp(url.trim()))
+                            : [];
                     }
                 });
                 dataItem.OrginValue = item;
