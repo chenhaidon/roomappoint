@@ -227,8 +227,8 @@ export default {
         elapsedTime() {
             if (!this.currentRecord?.BeginTime) return '0分钟';
             const begin = new Date(this.currentRecord.BeginTime).getTime();
-            const now = Date.now();
-            const diff = Math.floor((now - begin) / 1000);
+            const now = this.currentTime;
+            const diff = Math.max(0, Math.floor((now - begin) / 1000));
             const h = Math.floor(diff / 3600);
             const m = Math.floor((diff % 3600) / 60);
             if (h > 0) return `${h}小时${m}分钟`;
@@ -247,15 +247,16 @@ export default {
             editorShow: false,
             formData: {},
             timer: null,
+            currentTime: Date.now(),
         };
     },
     created() {
         this.loadRecords();
         this.timer = setInterval(() => {
             if (this.currentRecord && this.currentRecord.AppointStatus === 2) {
-                this.$forceUpdate();
+                this.currentTime = Date.now();
             }
-        }, 30000);
+        }, 1000);
     },
     beforeDestroy() {
         if (this.timer) clearInterval(this.timer);
